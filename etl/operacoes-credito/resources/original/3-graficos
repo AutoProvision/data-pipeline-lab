@@ -1,0 +1,111 @@
+São apresentados gráficos de Carteira, Inadimplência e Ativo Problemático, sendo possível a seleção dos seguintes parâmetros:
+
+  a. Período
+
+Opção de intervalo de datas-bases com possibilidade de escolha de data inicial a partir de 06/2012
+
+  b. Tipo de cliente
+
+Os tipos de cliente estão agrupados da seguinte forma:
+
+• Pessoas físicas
+• Pessoas jurídicas
+
+As aberturas de Tipo de Cliente apresentadas no relatório referenciam ao Anexo 11 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040, e são equivalentes às disponibilizadas no IF.data - https://www3.bcb.gov.br/ifdata/
+
+  c. Modalidade
+
+As modalidades das operações de crédito estão agrupadas da seguinte forma:
+
+• PF - Cartão de crédito
+• PF - Empréstimo com consignação em folha
+• PF - Empréstimo sem consignação em folha
+• PF - Habitacional
+• PF - Outros créditos
+• PF - Rural e agroindustrial
+• PF - Veículos
+• PJ - Capital de giro rotativo
+• PJ - Financiamento de infraestrutura/desenvolvimento/projeto e outros créditos
+• PJ - Investimento
+• PJ - Operações com recebíveis
+• PJ - Outros créditos
+• PJ - Rural e agroindustrial
+• PJ - Capital de giro
+• PJ - Comércio exterior
+• PJ - Habitacional
+
+As modalidades apresentadas no relatório representam uma agregação das submodalidades
+disponíveis no Anexo 3 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040, e são equivalentes às disponibilizadas no IF.data - https://www3.bcb.gov.br/ifdata/
+
+Equivalência entre as modalidades do SCR.data e as modalidades do SCR:
+https://www.bcb.gov.br/content/estabilidadefinanceira/Leiaute_de_documentos/scrdoc3040/Equivalencia_Modalidades.xlsx
+
+  d. UF
+
+O total nacional mais as 27 unidades da federação estão presentes no relatório. A informação segregada
+por unidades da federação é baseada no CEP de residência das pessoas físicas ou da Sede das pessoas
+jurídicas
+
+  e. Código Nacional de Atividades Econômicos - CNAE (Pessoas Jurídicas) ou Natureza da Ocupação (Pessoas
+Físicas)
+
+O CNAE disponível para visualização em formato gráfico refere-se às pessoas jurídicas e possui 21 seções e seus agrupamentos podem ser consultados no site do Instituto Brasileiro de Geografia e Estatísticas - IBGE. No portal de dados abertos, o CNAE é disponibilizado no nível máximo de desagregação (subclasses - 7 dígitos)
+
+As naturezas de ocupação referem-se às pessoas físicas e estão agrupadas da seguinte forma:
+
+• PF - Servidor ou empregado público
+• PF - Empregado de entidades sem fins lucrativos
+• PF - Empregado de empresa privada
+• PF - Aposentado/pensionista
+• PF - Autônomo
+• PF - Empresário
+• PF - MEI
+• PF - Outros
+
+A informação é proveniente do cadastro da Receita Federal do Brasil e refere-se à natureza da ocupação principal
+
+  f. Porte dos clientes
+
+O porte dos clientes está agrupado da seguinte forma:
+
+• PF - Sem rendimento
+• PF - Até 1 salário-mínimo
+• PF - Mais de 1 a 2 salários-mínimos
+• PF - Mais de 2 a 3 salários-mínimos
+• PF - Mais de 3 a 5 salários-mínimos
+• PF - Mais de 5 a 10 salários-mínimos
+• PF - Mais de 10 a 20 salários-mínimos
+• PF - Acima de 20 salários-mínimos
+• PF - Indisponível
+• PJ - Micro
+• PJ - Pequeno
+• PJ - Médio
+• PJ - Grande
+• PJ - Indisponível
+
+As aberturas de porte apresentadas no relatório referenciam aos Anexos 24 e 25 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040. As aberturas de porte de Pessoa Jurídica são equivalentes às disponibilizadas no IF.data - https://www3.bcb.gov.br/ifdata/
+
+  g. Origem de recursos
+
+A origem dos recursos está agrupada da seguinte forma:
+
+• Sem destinação específica
+• Com destinação específica
+
+As aberturas de Origens de recursos apresentadas no relatório representam o primeiro nível de
+agregação do Anexo 4 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040
+
+  h. Indexador da operação
+
+Os indexadores da operação estão agrupados da seguinte forma:
+
+• Prefixado
+• Pós-fixado
+• Flutuantes
+• Índices de preços
+• TCR/TRFC (Taxas de Juros do Crédito Rural e Taxas de Juros Rurais dos Fundos Constitucionais de
+Financiamento)
+• Outros indexadores
+
+Os Indexadores apresentados no relatório representam o primeiro nível de agregação do Anexo 5 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040, e são equivalentes aos
+disponibilizados no IF.data - https://www3.bcb.gov.br/ifdata/.

@@ -1,0 +1,180 @@
+  a. TCB (Tipo de Consolidado Bancário)
+
+Agrupado da seguinte forma:
+
+• Bancário (agregação de B1 - Banco comercial, banco múltiplo com carteira comercial ou caixas
+econômicas, B2 - Banco múltiplo sem carteira comercial ou banco de câmbio ou banco de investimento e
+B4 - Banco de desenvolvimento)
+• Não Bancário (agregação de N1 - Não bancário de crédito, N2 - Não bancário do mercado de capitais e
+N4 - Instituições de pagamento)
+• Cooperativas (B3S - Cooperativa de crédito singular e B3C - Central e confederação de cooperativas de
+crédito)
+
+  b. SR (Segmento Resolução nº 4.553/2017)
+
+Agrupado da seguinte forma:
+
+• S1 - Bancos múltiplos, bancos comerciais, bancos de investimento, bancos de câmbio e caixas econômicas
+que tenham porte (Exposição/Produto Interno Bruto) superior a 10% ou exerçam atividade internacional
+relevante (ativos no exterior superiores a US$ 10 bilhões).
+• S2 - Bancos múltiplos, bancos comerciais, bancos de investimento, bancos de câmbio e caixas econômicas
+de porte inferior a 10% e igual ou superior a 1% e demais instituições autorizadas a funcionar pelo Banco
+Central do Brasil de porte igual ou superior a 1% do PIB.
+• S3 - Instituições de porte inferior a 1% e igual ou superior a 0,1%.
+• S4 - Instituições de porte inferior a 0,1%.
+• S5 - Composto por instituições de porte inferior a 0,1% que utilizem metodologia facultativa simplificada
+para apuração dos requerimentos mínimos de Patrimônio de Referência (PR), de Nível I e de Capital
+
+Principal, exceto bancos múltiplos, bancos comerciais, bancos de investimento, bancos de câmbio e caixas econômicas e não sujeitas a apuração de PR.
+
+  c. Período
+
+Opção de intervalo de datas-bases com possibilidade de escolha de data inicial a partir de 06/2012.
+
+  d. Tipo de cliente
+
+Agrupado da seguinte forma:
+
+• Pessoas físicas
+• Pessoas jurídicas
+
+As aberturas de Tipo de Cliente apresentadas no relatório referenciam ao Anexo 11 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040, e são equivalentes às disponibilizadas no IF.data - https://www3.bcb.gov.br/ifdata/
+
+  e. Modalidade
+
+As modalidades das operações de crédito estão agrupadas da seguinte forma:
+
+• PF - Cartão de crédito
+• PF - Empréstimo com consignação em folha
+• PF - Empréstimo sem consignação em folha
+• PF - Habitacional
+• PF - Outros créditos
+• PF - Rural e agroindustrial
+• PF - Veículos
+• PJ - Capital de giro rotativo
+• PJ - Financiamento de infraestrutura/desenvolvimento/projeto e outros créditos
+• PJ - Investimento
+• PJ - Operações com recebíveis
+• PJ - Outros créditos
+• PJ - Rural e agroindustrial
+• PJ - Capital de giro
+• PJ - Comércio exterior
+• PJ - Habitacional
+
+As modalidades apresentadas no relatório representam uma agregação das submodalidades disponíveis no Anexo 3 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040, e são equivalentes às disponibilizadas no IF.data - https://www3.bcb.gov.br/ifdata/
+
+Equivalência entre as modalidades do SCR.data e as modalidades do SCR:
+https://www.bcb.gov.br/content/estabilidadefinanceira/Leiaute_de_documentos/scrdoc3040/Equivalencia_Modalidades.xlsx
+
+  f. UF
+
+O total nacional mais as 27 unidades da federação estão presentes no relatório. A informação segregada por unidades da federação é baseada no CEP de residência das pessoas físicas ou da Sede das pessoas jurídicas
+
+  g. Natureza da Ocupação (Pessoas Físicas)
+
+As naturezas de ocupação referem-se às pessoas físicas e estão agrupadas da seguinte forma:
+
+• PF - Servidor ou empregado público
+• PF - Empregado de entidades sem fins lucrativos
+• PF - Empregado de empresa privada
+• PF - Aposentado/pensionista
+• PF - Autônomo
+• PF - Empresário
+• PF - MEI
+• PF - Outros
+
+  h. Código Nacional de Atividades Econômicos - CNAE (Pessoas Jurídicas)
+
+O CNAE disponível para visualização em formato gráfico refere-se às pessoas jurídicas e possui 21 seções e seus agrupamentos podem ser consultados no site do Instituto Brasileiro de Geografia e Estatísticas - IBGE
+No portal de dados abertos, o CNAE é disponibilizado em duas colunas (Seção e Subclasse), com nível máximo de desagregação (subclasses - 7 dígitos) para os casos em que exista mais de 5 CNPJs considerando o CNAE Subclasse, o estado onde a empresa tem sede e o porte da empresa, de acordo com o cadastro da Receita Federal do Brasil. Caso a combinação CNAE Subclasse x UF x Porte resulte em 5 ou menos CNPJs no cadastro da RFB, é reportado o CNAE Seção
+
+  i. Porte dos clientes
+
+O porte dos clientes está agrupado da seguinte forma:
+
+• PF - Sem rendimento
+• PF - Até 1 salário-mínimo
+• PF - Mais de 1 a 2 salários-mínimos
+• PF - Mais de 2 a 3 salários-mínimos
+• PF - Mais de 3 a 5 salários-mínimos
+• PF - Mais de 5 a 10 salários-mínimos
+• PF - Mais de 10 a 20 salários-mínimos
+• PF - Acima de 20 salários-mínimos
+• PF - Indisponível
+• PJ - Micro
+• PJ - Pequeno
+• PJ - Médio
+• PJ - Grande
+• PJ - Indisponível
+
+As aberturas de porte apresentadas no relatório referenciam aos Anexos 24 e 25 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040. As aberturas de porte de Pessoa Jurídica são equivalentes às disponibilizadas no IF.data - https://www3.bcb.gov.br/ifdata/
+
+  j. Origem de recursos
+
+A origem dos recursos está agrupada da seguinte forma:
+
+• Sem destinação específica
+• Com destinação específica
+
+As aberturas de Origens de recursos apresentadas no relatório representam o primeiro nível de agregação do Anexo 4 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040
+
+  k. Indexador da operação
+
+Os indexadores da operação estão agrupados da seguinte forma:
+
+• Prefixado
+• Pós-fixado
+• Flutuantes
+• Índices de preços
+• TCR/TRFC (Taxas de Juros do Crédito Rural e Taxas de Juros Rurais dos Fundos Constitucionais de
+Financiamento)
+• Outros indexadores
+
+Os Indexadores apresentados no relatório representam o primeiro nível de agregação do Anexo 5 do Leiaute do SCR, disponível em https://www.bcb.gov.br/estabilidadefinanceira/scrdoc3040, e são equivalentes aos disponibilizados no IF.data - https://www3.bcb.gov.br/ifdata/
+
+
+  l. Operações
+
+Representa o número de operações de crédito para uma dada série. Casos em que o número de
+operações seja inferior ou igual a 15, a informação divulgada será “<= 15”
+
+  m. Valores a vencer até 90 dias
+
+Somatório dos créditos a vencer até 90 dias.
+
+  n. Valores a vencer de 91 a 360 dias
+
+Somatório dos créditos a vencer de 91 até 360 dias.
+
+  o. Valores a vencer de 361 até 1080 dias
+
+Somatório dos créditos a vencer de 361 até 1080 dias.
+
+  p. Valores a vencer de 1081 até 1800 dias
+
+Somatório dos créditos a vencer de 1081 até 1800 dias.
+
+  q. Valores a vencer de 1801 até 5400 dias
+
+Somatório dos créditos a vencer de 1801 até 5400 dias.
+
+  r. Valores a vencer acima de 5400 dias
+
+Somatório dos créditos a vencer acima de 5400 dias.
+
+  s. Valores vencidos acima de 15 dias
+
+Somatório dos créditos vencidos acima de 15 dias.
+
+  t. Carteira total
+
+Somatório dos itens m, n, o, p, q, r.
+
+  u. Carteira inadimplida arrastada
+
+  Somatório das operações de crédito a vencer e vencidos que possuam alguma parcela vencida há mais de
+90 dias.
+
+  v. Ativos problemáticos
+
+Somatório dos créditos das operações de crédito classificadas com risco entre E e H, operações reestruturadas e das operações consideradas na carteira inadimplida arrastada (ver conceitos no item 2.d)
