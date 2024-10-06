@@ -1,7 +1,7 @@
 import warnings
 import os
 
-os.system("pip install requests pyspark pandas pyarrow matplotlib numpy asyncio aiohttp")
+os.system("pip install requests pyspark pandas pyarrow matplotlib numpy asyncio aiohttp httpx bs4 fastparquet")
 
 import zipfile, requests, random, asyncio, aiohttp, io
 import pandas as pd
@@ -15,6 +15,8 @@ from pyspark.sql.types import IntegerType, DecimalType, DoubleType
 from pyspark.sql.functions import regexp_replace, to_date, col, trim, substring, when, mean, format_number
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 import pyarrow as pa
+from bs4 import BeautifulSoup
+import httpx
 
 getcontext().prec = 30
 warnings.simplefilter(action='ignore', category=FutureWarning)

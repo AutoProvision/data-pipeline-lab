@@ -1,5 +1,2 @@
-*staging/
-*raw/
-*trusted/
-*refined/
+_data/*
 __pycache__/
