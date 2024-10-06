@@ -33,4 +33,3 @@ for layer in layers:
 	for etl in etls:
 		if not os.path.exists(f'_data/{layer}/{etl}'):
 			os.makedirs(f'_data/{layer}/{etl}')
-
