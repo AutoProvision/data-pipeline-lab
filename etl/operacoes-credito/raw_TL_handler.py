@@ -20,7 +20,6 @@ def dataframefy(f):
 		'Índices de preços': np.nan,
 	}
 	df['indexador_modalidade'] = df['indexador'].replace(INDEXADOR_MAP_TABLE)
-	df['possui_modalidade'] = df['origem'].apply(lambda x: x != 'Sem destinação específica')
 	df.drop(
 		columns=[
       		'cnae_subclasse',
