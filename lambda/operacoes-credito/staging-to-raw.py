@@ -23,49 +23,47 @@ def dataframefy(f):
 	df['possui_modalidade'] = df['origem'].apply(lambda x: x != 'Sem destinação específica')
 	df.drop(
 		columns=[
-      		'cnae_subclasse',
-        	'a_vencer_ate_90_dias',
-         	'a_vencer_de_91_ate_360_dias',
-         	'a_vencer_de_361_ate_1080_dias',
-         	'a_vencer_de_1081_ate_1800_dias',
-         	'a_vencer_de_1801_ate_5400_dias',
-         	'a_vencer_acima_de_5400_dias',
-         	'vencido_acima_de_15_dias',
+	  		'cnae_subclasse',
+			'a_vencer_ate_90_dias',
+		 	'a_vencer_de_91_ate_360_dias',
+		 	'a_vencer_de_361_ate_1080_dias',
+		 	'a_vencer_de_1081_ate_1800_dias',
+		 	'a_vencer_de_1801_ate_5400_dias',
+		 	'a_vencer_acima_de_5400_dias',
+		 	'vencido_acima_de_15_dias',
 			'tcb',
 			'sr',
 			'indexador',
 			'origem',
-        ],
+		],
 		inplace=True
 	)
 	return df
-	
+
 def file_exists(bucket, key):
-    try:
-        s3.head_object(Bucket=bucket, Key=key)
-        return True
-    except Exception as e:
-        return False
-	
+	try:
+		s3.head_object(Bucket=bucket, Key=key)
+		return True
+	except Exception as e:
+		return False
 
 def lambda_handler(event, context):
 	YEAR = event['year']
 	MONTH = event['month']
-	
+
 	parquet_key = f'{prefix_source}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
-	
+
 	if file_exists(bucket_dest, parquet_key):
-	    print("Sem dados novos")
-    else:
-		
+		print("Sem dados novos")
+	else:
 		zip_key = f'{prefix_source}/{YEAR}/planilha.zip'
-	
+
 		print(f'Processando arquivo: {zip_key}')
-	
+
 		zip_obj = s3.get_object(Bucket=bucket_source, Key=zip_key)
 		zip_data = zip_obj['Body'].read()
 		zip_file = zipfile.ZipFile(BytesIO(zip_data))
-	
+
 		with zip_file as z:
 			with z.open(f'planilha_{YEAR}{MONTH}.csv') as f:
 				df = dataframefy(f)

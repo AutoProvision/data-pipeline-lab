@@ -7,22 +7,22 @@ s3_client = boto3.client('s3')
 
 def lambda_handler(event, context):
     date_str = datetime.now().strftime('%Y-%m-%d')
-    
+
     source_bucket = 'autoprovision-datalake-raw'
     source_prefix = 'banco-central/taxas-inflacao/' 
     destination_bucket = 'autoprovision-datalake-trusted'
-    
+
     response = s3_client.list_objects_v2(Bucket=source_bucket, Prefix=source_prefix)
-    
+
     if 'Contents' not in response:
         return {
             'statusCode': 404,
             'body': 'Nenhum arquivo encontrado na pasta especificada.'
         }
-    
+
     for obj in response['Contents']:
         source_key = obj['Key']
-        
+
         if source_key.endswith('.parquet'):
             local_parquet_path = '/tmp/' + os.path.basename(source_key) 
             s3_client.download_file(source_bucket, source_key, local_parquet_path)

@@ -12,7 +12,6 @@ BUCKET_NAME = 'autoprovision-datalake-staging'
 _DOMAIN = "banco-central"
 _DATASET = "operacoes-credito"
 
-
 def set_staging_path(year: str):
 
     staging_path = f"{_DOMAIN}/{_DATASET}/{year}/planilha.zip"
@@ -25,10 +24,9 @@ async def download_and_upload_zip(year: int):
 
     try:
         async with httpx.AsyncClient(timeout=30) as client:
-            
             chunk_size = 512 * 1024
             async with client.stream('GET', zip_url) as resp:
-                
+
                 resp.raise_for_status() 
                 bytes_buffer = io.BytesIO()
 
@@ -51,13 +49,11 @@ async def download_and_upload_zip(year: int):
         }
 
 def lambda_handler(event, context):
-
     if 'body' in event:
         body = json.loads(event['body'])
         year = body.get('year')
-        
     else:
         year = datetime.now().year
-        
+
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(download_and_upload_zip(year=year))

@@ -19,15 +19,15 @@ def lambda_handler(event, context):
 
         s3 = boto3.client('s3')
         s3.upload_fileobj(io.BytesIO(csv_data), bucket_raw, bucket_raw_key)
-        
+
         df = pd.read_csv(io.BytesIO(csv_data), sep=';')
-        
+
         df['valor'] = df['valor'].str.replace(',', '.').astype(float)
-        
+
         df['data'] = pd.to_datetime(df['data'], format='%d/%m/%Y')
-        
+
         print(df)
-        
+
         parquet_buffer = io.BytesIO()
         df.to_parquet(parquet_buffer, index=False)
 
