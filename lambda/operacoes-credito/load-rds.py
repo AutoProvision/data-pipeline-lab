@@ -32,8 +32,8 @@ def lambda_handler(event, context):
     df['dt_ref'] = datetime.now().strftime("%Y-%m-%d %H:%M")
     
     # Conectando ao banco e enviando os dados
-    conn = create_db_connection("data-mart-financeiro")
-    df.to_sql("banco_central.operacoes_credito", con=conn, index=False, if_exists="append")
+    conn = create_db_connection("autoprovision")
+    df.to_sql("financeiro.banco_central.operacoes_credito", con=conn, index=False, if_exists="append")
     
     return {
         'statusCode': 200,

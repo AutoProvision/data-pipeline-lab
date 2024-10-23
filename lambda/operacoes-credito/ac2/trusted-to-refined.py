@@ -26,6 +26,12 @@ def lambda_handler(event, context):
 
     s3.put_object(Bucket=bucket_trusted, Key=output_key, Body=output_buffer.getvalue())
     
+    lambda_client = boto3.client('lambda')
+    response = lambda_client.invoke(
+        FunctionName='autoprovision-ac2-load-rds',
+        InvocationType='Event'
+    )
+    
     return {
         'statusCode': 200,
         'body': 'Processamento e upload concluídos com sucesso.'
