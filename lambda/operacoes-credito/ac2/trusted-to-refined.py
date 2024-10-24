@@ -13,13 +13,17 @@ def lambda_handler(event, context):
     df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
 
     df['vl_carteira_problematica'] = df['vl_ativo_problematico'] - df['vl_carteira_inadimplida_arrastada']
-    
-    df[df['vl_carteira_problematica'] < 0]['vl_carteira_problematica']
-    
+
     df['vl_carteira_problematica'] = df['vl_carteira_problematica'].clip(lower=0)
     
     df['vl_carteira_ativa'] = df['vl_carteira_ativa'] - df['vl_carteira_problematica']
     df.rename(columns={ 'vl_carteira_ativa': 'vl_carteira_saudavel' }, inplace=True)
+    
+    df['vl_carteira_saudavel'] = df['vl_carteira_saudavel'] / df['qt_numero_de_operacoes']
+    df['vl_carteira_problematica'] = df['vl_carteira_problematica'] / df['qt_numero_de_operacoes']
+    df['vl_carteira_inadimplida_arrastada'] = df['vl_carteira_inadimplida_arrastada'] / df['qt_numero_de_operacoes']
+    
+    df.drop(columns=['qt_numero_de_operacoes'], inplace=True)
 
     output_buffer = BytesIO()
     df.to_parquet(output_buffer, index=False, engine='pyarrow')
