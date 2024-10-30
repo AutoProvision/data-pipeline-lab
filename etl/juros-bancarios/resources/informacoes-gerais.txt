@@ -1,0 +1,15 @@
+Aqui você encontra a média das taxas de juros praticadas pelas instituições financeiras em cada modalidade de crédito, no período indicado na consulta. Já estão incluídos os encargos cobrados nas operações.
+
+As taxas variam de um cliente para outro, dependendo da situação cadastral do cliente, do valor pago como entrada (se for o financiamento de uma compra) e das garantias consideradas na operação, entre outros.
+
+Atenção! O Banco Central não se responsabiliza por atraso ou erro nas informações prestadas pelas instituições financeiras.
+
+Caso a instituição que você procura não apareça em alguma tabela, significa que ela não realizou nenhuma operação de crédito na modalidade e no período pesquisado, ou ela não prestou informações ao Banco Central no prazo previsto em norma.
+
+Como são calculadas?
+
+Essas taxas de juros representam médias aritméticas das taxas de juros das operações realizadas no período indicado em cada publicação, ponderadas pelos respectivos valores contratados.
+
+Essas taxas representam o custo efetivo médio das operações de crédito, que é composto pelas taxas de juros efetivamente praticadas pelas instituições financeiras e custos adicionais, como encargos fiscais e operacionais dessas operações.
+
+Observação: De abril de 2017 a fevereiro de 2022, as taxas das operações de cartão de crédito rotativo foram publicadas de forma desagregada nas modalidades cartão de crédito rotativo regular (financiamento de saldo em aberto após pagamento mínimo da fatura) e cartão de crédito rotativo não regular (financiamento de saldo em aberto sem pagamento mínimo da fatura, considerados em atraso).
