@@ -4,9 +4,9 @@ from io import BytesIO
 
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
-    bucket_name = 'autoprovision-ac2-trusted'
+    bucket_name = 'autop-trusted'
     key = 'banco-central/operacoes-credito/df_trusted.parquet' 
-    bucket_trusted = 'autoprovision-ac2-refined'
+    bucket_trusted = 'autop-refined'
     output_key = 'banco-central/operacoes-credito/df_refined.parquet'
 
     obj = s3.get_object(Bucket=bucket_name, Key=key)
@@ -29,12 +29,6 @@ def lambda_handler(event, context):
     df.to_parquet(output_buffer, index=False, engine='pyarrow')
 
     s3.put_object(Bucket=bucket_trusted, Key=output_key, Body=output_buffer.getvalue())
-    
-    lambda_client = boto3.client('lambda')
-    response = lambda_client.invoke(
-        FunctionName='autoprovision-ac2-load-rds',
-        InvocationType='Event'
-    )
     
     return {
         'statusCode': 200,

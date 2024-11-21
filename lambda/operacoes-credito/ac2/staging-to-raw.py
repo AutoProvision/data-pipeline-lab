@@ -8,8 +8,8 @@ import boto3
 
 s3 = boto3.client('s3')
 
-bucket_source = 'autoprovision-ac2-staging'
-bucket_dest = 'autoprovision-ac2-raw'
+bucket_source = 'autop-staging'
+bucket_dest = 'autop-raw'
 prefix_source = 'banco-central/operacoes-credito'
 
 def dataframefy(f):
@@ -96,7 +96,7 @@ def lambda_handler(event, context):
                 
     lambda_client = boto3.client('lambda')
     response = lambda_client.invoke(
-        FunctionName='autoprovision-ac2-raw-trusted',
+        FunctionName='autoprovision-raw-to-trusted',
         InvocationType='Event'
     )
 

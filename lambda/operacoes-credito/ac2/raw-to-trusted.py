@@ -6,9 +6,9 @@ import pyarrow
 def lambda_handler(event, context):
     
     s3 = boto3.client('s3')
-    bucket_name = 'autoprovision-ac2-raw'
+    bucket_name = 'autop-raw'
     prefix = 'banco-central/operacoes-credito' 
-    bucket_trusted = 'autoprovision-ac2-trusted'
+    bucket_trusted = 'autop-trusted'
     
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
     files = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.parquet')]
@@ -55,7 +55,7 @@ def lambda_handler(event, context):
     
     lambda_client = boto3.client('lambda')
     response = lambda_client.invoke(
-        FunctionName='autoprovision-ac2-trusted-refined',
+        FunctionName='autoprovision-trusted-to-refined',
         InvocationType='Event'
     )
 

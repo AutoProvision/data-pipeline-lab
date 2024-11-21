@@ -9,7 +9,7 @@ from botocore.exceptions import NoCredentialsError, ClientError
 from datetime import datetime
 
 s3_client = boto3.client('s3')
-BUCKET_NAME = 'autoprovision-ac2-staging'
+BUCKET_NAME = 'autop-staging'
 _DOMAIN = "banco-central"
 _DATASET = "operacoes-credito"
 
@@ -46,7 +46,14 @@ async def download_and_upload_zip(year: int):
         return None
 
 def lambda_handler(event, context):
-    year = datetime.now().year
+
+    data = json.loads(event['body'])
+
+    if 'year' in data and data['year']:
+        year = data['year']
+    else:
+        year = datetime.now().year
+        
     loop = asyncio.get_event_loop()
     meses_presentes = loop.run_until_complete(download_and_upload_zip(year=year))
 
@@ -63,7 +70,7 @@ def lambda_handler(event, context):
     }
 
     response = lambda_client.invoke(
-        FunctionName='autoprovision-ac2-staging-raw',
+        FunctionName='autoprovision-staging-to-raw',
         InvocationType='Event',
         Payload=json.dumps(payload).encode('utf-8')  
     )
