@@ -38,16 +38,16 @@ def dataframefy(f):
         ],
         inplace=True
     )
-    
+
     df['porte'] = df['porte'].str.strip()
     df = df[~df['porte'].isin(['PJ - Indisponível', 'PF - Indisponível'])]
     valores_a_manter = [
-        'PJ - Capital de giro', 
-        'PJ - Cheque especial e conta garantida', 
-        'PF - Cartão de crédito', 
-        'PF - Empréstimo com consignação em folha', 
-        'PF - Habitacional', 
-        'PF - Veículos'
+        'PJ - Capital de giro',
+        'PJ - Cheque especial e conta garantida',
+        'PF - Cartão de crédito',
+        'PF - Empréstimo com consignação em folha',
+        'PF - Habitacional',
+        'PF - Veículos',
     ]
     df = df[df['modalidade'].isin(valores_a_manter)]
     print(df.columns)
@@ -62,25 +62,24 @@ def file_exists(bucket, key):
 
 def lambda_handler(event, context):
     YEAR = event['year']
-    MONTHS = event['months']  # Agora recebemos uma lista de meses
+    MONTHS = event['months']
 
     for MONTH in MONTHS:
         parquet_key = f'{prefix_source}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
-        
+
         if file_exists(bucket_dest, parquet_key):
             print(f"Arquivo {parquet_key} já existe. Sem dados novos.")
-            continue  # Pula para o próximo mês se o arquivo já existe
+            continue
 
         zip_key = f'{prefix_source}/{YEAR}/planilha.zip'
         print(f'Processando arquivo: {zip_key}')
-        
+
         zip_obj = s3.get_object(Bucket=bucket_source, Key=zip_key)
         zip_data = zip_obj['Body'].read()
         zip_file = zipfile.ZipFile(BytesIO(zip_data))
 
-        # Aqui, consideramos que o arquivo CSV segue um padrão específico
         csv_file_name = f'planilha_{YEAR}{MONTH}.csv'
-        
+
         if csv_file_name in zip_file.namelist():
             with zip_file.open(csv_file_name) as f:
                 df = dataframefy(f)
@@ -93,7 +92,7 @@ def lambda_handler(event, context):
                 print(f'Arquivo {parquet_key} enviado com sucesso')
         else:
             print(f'Arquivo {csv_file_name} não encontrado no ZIP.')
-                
+
     lambda_client = boto3.client('lambda')
     response = lambda_client.invoke(
         FunctionName='autoprovision-raw-to-trusted',

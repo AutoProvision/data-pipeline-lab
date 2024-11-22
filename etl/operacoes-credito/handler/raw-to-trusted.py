@@ -1,26 +1,24 @@
 import boto3
 import pandas as pd
 from io import BytesIO
-import pyarrow
 
 def lambda_handler(event, context):
-    
+
     s3 = boto3.client('s3')
     bucket_name = 'autop-raw'
-    prefix = 'banco-central/operacoes-credito' 
+    prefix = 'banco-central/operacoes-credito'
     bucket_trusted = 'autop-trusted'
-    
+
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
     files = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.parquet')]
-    
+
     MONETARY_COLS = ['carteira_ativa', 'carteira_inadimplida_arrastada', 'ativo_problematico']
     CATEGORY_COLS = ['uf', 'ocupacao', 'cnae', 'porte', 'modalidade', 'indexador_modalidade', 'classificacao']
     QUANTITY_COLS = ['numero_de_operacoes']
     DATE_COLS = ['data_base']
-    
-    
+
     full_df = pd.DataFrame()
-    
+
     for file in files:
         obj = s3.get_object(Bucket=bucket_name, Key=file)
         df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
@@ -43,16 +41,16 @@ def lambda_handler(event, context):
                 df = df.rename(columns={column: f'dt_{column}'})
         print(file)
         full_df = pd.concat([full_df, df], ignore_index=True)
-        
-    
-    
+
+
+
     parquet_key = f'{prefix}/df_trusted.parquet'
-    
+
     buffer = BytesIO()
     full_df.to_parquet(buffer, index=False)
 
     s3.put_object(Bucket=bucket_trusted, Key=parquet_key, Body=buffer.getvalue())
-    
+
     lambda_client = boto3.client('lambda')
     response = lambda_client.invoke(
         FunctionName='autoprovision-trusted-to-refined',

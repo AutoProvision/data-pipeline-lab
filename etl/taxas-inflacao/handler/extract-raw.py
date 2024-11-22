@@ -6,11 +6,11 @@ import boto3
 import io
 from datetime import datetime
 
-def lambda_handler(event, context):   
+def lambda_handler(event, context):
 
     date_str = datetime.now().strftime('%Y-%m-%d')
     s3_client = boto3.client('s3')
-    bucket_name = 'autoprovision-datalake-raw' 
+    bucket_name = 'autoprovision-datalake-raw'
     s3_key = f'banco-central/taxas-inflacao/{date_str}/bcb_metas_inflacao-{date_str}.parquet'
 
     response = httpx.get('https://www.bcb.gov.br/api/paginasite/sitebcb/controleinflacao/historicometas').json()['conteudo']

@@ -1,0 +1,9 @@
+bucket:
+  staging:
+    name: "autop-staging"
+  raw:
+    name: "autop-raw"
+  trusted:
+    name: "autop-trusted"
+  refined:
+    name: "autop-refined"
