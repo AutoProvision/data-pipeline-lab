@@ -15,13 +15,3 @@ def load_yaml_as_env():
                 os.environ[f"{prefix}_{key.upper()}"] = str(value)
 
     set_env_variables("", config)
-
-load_yaml_as_env()
-
-database_url = os.getenv("BUCKET_STAGING_NAME")
-api_key = os.getenv("BUCKET_RAW_NAME")
-debug_mode = os.getenv("BUCKET_REFINED_NAME")
-
-print(f"Database URL: {database_url}")
-print(f"API Key: {api_key}")
-print(f"Debug Mode: {debug_mode}")

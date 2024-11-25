@@ -5,12 +5,15 @@ from bs4 import BeautifulSoup
 import boto3
 import io
 from datetime import datetime
+import os
+
+s3_client = boto3.client('s3')
+
+BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 
 def lambda_handler(event, context):
 
     date_str = datetime.now().strftime('%Y-%m-%d')
-    s3_client = boto3.client('s3')
-    bucket_name = 'autoprovision-datalake-raw'
     s3_key = f'banco-central/taxas-inflacao/{date_str}/bcb_metas_inflacao-{date_str}.parquet'
 
     response = httpx.get('https://www.bcb.gov.br/api/paginasite/sitebcb/controleinflacao/historicometas').json()['conteudo']
@@ -50,4 +53,4 @@ def lambda_handler(event, context):
 
     buffer.seek(0)
 
-    s3_client.upload_fileobj(buffer, bucket_name, s3_key)
+    s3_client.upload_fileobj(buffer, BUCKET_NAME, s3_key)
