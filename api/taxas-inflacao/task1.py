@@ -1,6 +1,4 @@
 import os
-os.system("pip install httpx pandas pyarrow boto3 bs4")
-
 import httpx
 import numpy as np
 import pandas as pd

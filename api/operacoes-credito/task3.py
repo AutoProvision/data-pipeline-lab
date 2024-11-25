@@ -1,6 +1,3 @@
-import os
-os.system("pip install boto3 pandas pyarrow")
-
 import boto3
 import pandas as pd
 from io import BytesIO

@@ -1,6 +1,3 @@
-import os
-os.system("pip install requests pandas boto3")
-
 import requests
 import pandas as pd
 import boto3

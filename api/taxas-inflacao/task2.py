@@ -1,6 +1,4 @@
 import os
-os.system("pip install boto3 pandas")
-
 import pandas as pd
 import boto3
 from datetime import datetime
