@@ -1,3 +1,6 @@
+import os
+os.system("pip install httpx pandas pyarrow boto3 bs4")
+
 import httpx
 import numpy as np
 import pandas as pd
@@ -5,7 +8,6 @@ from bs4 import BeautifulSoup
 import boto3
 import io
 from datetime import datetime
-import os
 
 s3_client = boto3.client('s3')
 

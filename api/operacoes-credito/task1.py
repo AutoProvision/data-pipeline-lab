@@ -1,9 +1,11 @@
+import os
+os.system("pip install httpx beautifulsoup4 boto3")
+
 import asyncio
 from bs4 import BeautifulSoup
 import httpx
 import boto3
 import io
-import os
 
 s3_client = boto3.client('s3')
 

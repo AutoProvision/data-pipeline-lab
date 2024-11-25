@@ -1,3 +1,6 @@
+import os
+os.system("pip install pyarrow pandas boto3 numpy")
+
 import zipfile
 import pandas as pd
 import pyarrow as pa

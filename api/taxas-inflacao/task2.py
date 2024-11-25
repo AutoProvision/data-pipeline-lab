@@ -1,6 +1,8 @@
+import os
+os.system("pip install boto3 pandas")
+
 import pandas as pd
 import boto3
-import os
 from datetime import datetime
 
 s3_client = boto3.client('s3')
