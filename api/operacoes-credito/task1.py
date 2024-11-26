@@ -49,4 +49,4 @@ def lambda_handler(event, context):
     loop.run_until_complete(download_and_upload_zip())
 
 def handler():
-    pass
+    return lambda_handler({}, {})

@@ -7,8 +7,6 @@ BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 
 def lambda_handler(event, context):
 
-    print("Task1 Zoho")
-
     print("Rodando pipeline zoho...")
     print("Iniciando teste de conexão ao bucket")
     print(BUCKET_NAME)

@@ -3,11 +3,6 @@ import re
 import importlib.util
 import traceback
 from api import yaml_load
-import boto3
-
-s3_client = boto3.client('s3')
-
-BUCKET_NAME = "autop-raw"
 
 def get_files_by_folder(base_path):
     folder_files = {}
@@ -56,18 +51,4 @@ def main():
     print("Erros encontrados:", errors)
 
 if __name__ == '__main__':
-
-    print("Main")
-
-
-    print("Rodando pipeline zoho...")
-    print("Iniciando teste de conexão ao bucket")
-    print(BUCKET_NAME)
-
-    try:
-        s3_client.list_objects(Bucket=BUCKET_NAME)
-        print("Conexão ao bucket realizada com sucesso!")
-    except Exception as e:
-        print(f"Erro ao conectar ao bucket: {e}")
-
     main()
