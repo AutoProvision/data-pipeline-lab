@@ -2,7 +2,8 @@
 
 Configurando ambiente da VM
 ```bash
-sudo apt install docker-compose
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install docker-compose -y
 sudo usermod -aG docker $USER
 exit
 ```
