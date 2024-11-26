@@ -12,9 +12,10 @@ def get_files_by_folder(base_path):
         if root == base_path:
             for folder in dirs:
                 folder_path = os.path.join(base_path, folder)
-                folder_files[folder] = [
+                curr_folder_files = [
                     f for f in os.listdir(folder_path) if task_pattern.match(f)
                 ]
+                folder_files[folder] = curr_folder_files
     return folder_files
 
 def execute_handlers(base_path, folder_files):

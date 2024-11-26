@@ -1,0 +1,10 @@
+requests
+pandas
+boto3
+httpx
+beautifulsoup4
+pyarrow
+numpy
+httpx
+bs4
+PyYAML

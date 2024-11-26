@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      PYTHONUNBUFFERED: "1"
+    entrypoint: ["sh", "-c", "python main.py"]
+    restart: "no"
