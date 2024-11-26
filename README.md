@@ -14,20 +14,5 @@ git clone https://github.com/AutoProvision/data-pipeline-lab.git
 cd data-pipeline-lab
 docker-compose build
 docker-compose up
-```
-
-### Venv
-
-Iniciando processo
-```bash
-sudo rm -rf data-pipeline-lab
-git clone https://github.com/AutoProvision/data-pipeline-lab.git
-cd data-pipeline-lab
-python3 -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-python3 main.py
-deactivate
 cd ..
 ```
