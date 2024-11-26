@@ -10,3 +10,4 @@ services:
       PYTHONUNBUFFERED: "1"
     entrypoint: ["sh", "-c", "python main.py"]
     restart: "no"
+    network_mode: host
