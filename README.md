@@ -18,11 +18,6 @@ docker-compose up
 
 ### Venv
 
-Configurando ambiente da VM
-```bash
-sudo apt install python3-venv
-```
-
 Iniciando processo
 ```bash
 sudo rm -rf data-pipeline-lab
@@ -32,5 +27,7 @@ python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
-python main.py
+python3 main.py
+deactivate
+cd ..
 ```
