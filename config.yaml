@@ -7,3 +7,8 @@ bucket:
     name: "autop-trusted"
   refined:
     name: "autop-refined"
+db:
+  zoho:
+    instance:
+      ip: 54.174.251.9
+      name: "ec2-autoprovision"

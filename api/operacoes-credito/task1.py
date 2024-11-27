@@ -26,14 +26,10 @@ def find_latest_year():
 
     return zip_url[len(zip_url) - 8: len(zip_url) - 4]
 
-YEAR = find_latest_year()
-SOURCE_FILENAME = f"https://www.bcb.gov.br/pda/desig/planilha_{YEAR}.zip"
-DESTINATION_FILENAME = f'banco-central/operacoes-credito/{YEAR}/planilha.zip'
-
-async def download_and_upload_zip():
+async def download_and_upload_zip(source_filename, destination_filename):
     async with httpx.AsyncClient(timeout=30) as client:
         chunk_size = 512 * 1024
-        async with client.stream('GET', SOURCE_FILENAME) as resp:
+        async with client.stream('GET', source_filename) as resp:
             resp.raise_for_status()
             bytes_buffer = io.BytesIO()
 
@@ -41,12 +37,20 @@ async def download_and_upload_zip():
                 bytes_buffer.write(chunk)
 
             bytes_buffer.seek(0)
-            s3_client.upload_fileobj(bytes_buffer, BUCKET_NAME, DESTINATION_FILENAME)
+            s3_client.upload_fileobj(bytes_buffer, BUCKET_NAME, destination_filename)
 
 def lambda_handler(event, context):
 
+    try:
+        YEAR = find_latest_year()
+    except Exception as e:
+        raise f"Erro encontrando o último ano disponível: {e}"
+
+    SOURCE_FILENAME = f"https://www.bcb.gov.br/pda/desig/planilha_{YEAR}.zip"
+    DESTINATION_FILENAME = f'banco-central/operacoes-credito/{YEAR}/planilha.zip'
+
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(download_and_upload_zip())
+    loop.run_until_complete(download_and_upload_zip(SOURCE_FILENAME, DESTINATION_FILENAME))
 
 def handler():
     return lambda_handler({}, {})
