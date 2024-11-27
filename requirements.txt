@@ -8,3 +8,4 @@ numpy
 httpx
 bs4
 PyYAML
+psycopg2-binary
