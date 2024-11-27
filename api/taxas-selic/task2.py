@@ -8,9 +8,9 @@ s3_client = boto3.client('s3')
 
 TODAY = datetime.now().strftime('%Y-%m-%d')
 SRC_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
-SRC_PATH = f"banco-central/taxas-selic/{TODAY}.csv"
+SRC_PATH = f"banco-central/taxas-selic/{TODAY}/df.csv"
 DEST_BUCKET_NAME = os.getenv("BUCKET_TRUSTED_NAME")
-DEST_PATH = f'banco-central/taxa-selic/{TODAY}/taxa-selic-trusted-{TODAY}.parquet'
+DEST_PATH = f'banco-central/taxas-selic/{TODAY}/df.csv'
 
 def lambda_handler(event, context):
     response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)

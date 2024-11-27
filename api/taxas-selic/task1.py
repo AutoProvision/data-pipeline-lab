@@ -8,7 +8,7 @@ s3_client = boto3.client('s3')
 
 TODAY = datetime.now().strftime('%Y-%m-%d')
 DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
-DEST_PATH = f"banco-central/taxas-selic/{TODAY}.csv"
+DEST_PATH = f"banco-central/taxas-selic/{TODAY}/df.csv"
 
 def lambda_handler(event, context):
     response = requests.get('https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=csv')
