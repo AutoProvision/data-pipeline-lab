@@ -15,6 +15,7 @@ def get_files_by_folder(base_path):
                 curr_folder_files = [
                     f for f in os.listdir(folder_path) if task_pattern.match(f)
                 ]
+                curr_folder_files.sort()
                 folder_files[folder] = curr_folder_files
     return folder_files
 

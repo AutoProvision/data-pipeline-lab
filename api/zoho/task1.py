@@ -2,21 +2,11 @@ import os
 import boto3
 
 s3_client = boto3.client('s3')
-ec2_client = boto3.client('ec2', region_name='us-east-1')
 
 BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 
-def lambda_handler(event, context):
-
-    print("Rodando pipeline zoho...")
-    print("Iniciando teste de conexão ao bucket")
-    print(BUCKET_NAME)
-
-    try:
-        s3_client.list_objects(Bucket=BUCKET_NAME)
-        print("Conexão ao bucket realizada com sucesso!")
-    except Exception as e:
-        print(f"Erro ao conectar ao bucket: {e}")
+def get_db_ip():
+    ec2_client = boto3.client('ec2', region_name='us-east-1')
 
     instance_name = "ec2-autoprovision"
     filters = [
@@ -50,5 +40,15 @@ def lambda_handler(event, context):
     print(f"Instance ID: {instance_details['InstanceId']}")
     print(f"Public IP: {instance_details['PublicIpAddress']}")
 
-def handler():
-    return lambda_handler({}, {})
+def lambda_handler(event, context):
+
+    print("Rodando pipeline zoho...")
+    print("Iniciando teste de conexão ao bucket")
+    print(BUCKET_NAME)
+
+    try:
+        s3_client.list_objects(Bucket=BUCKET_NAME)
+        print("Conexão ao bucket realizada com sucesso!")
+    except Exception as e:
+        print(f"Erro ao conectar ao bucket: {e}")
+
