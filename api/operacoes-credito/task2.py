@@ -69,7 +69,7 @@ def lambda_handler(event, context):
     files.sort(reverse=True)
     latest_file = files[0]
 
-    YEAR = latest_file[-12:-8]
+    YEAR = latest_file[-7:-3]
 
     zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=latest_file)
     zip_data = zip_obj['Body'].read()
@@ -88,6 +88,7 @@ def lambda_handler(event, context):
             continue
 
         csv_file_name = f'planilha_{YEAR}{MONTH}.csv'
+        print(csv_file_name)
 
         if csv_file_name in zip_file.namelist():
             with zip_file.open(csv_file_name) as f:
@@ -98,9 +99,6 @@ def lambda_handler(event, context):
                 parquet_buffer.seek(0)
 
                 s3_client.upload_fileobj(parquet_buffer, DEST_BUCKET_NAME, parquet_key)
-                print(f'Arquivo {parquet_key} enviado com sucesso')
-        else:
-            print(f'Arquivo {csv_file_name} não encontrado no ZIP.')
 
 def handler():
     return lambda_handler({}, {})
