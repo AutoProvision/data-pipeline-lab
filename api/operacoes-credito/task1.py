@@ -27,7 +27,15 @@ def find_latest_year():
     return zip_url[len(zip_url) - 8: len(zip_url) - 4]
 
 async def download_and_upload_zip(source_filename, destination_filename):
-    async with httpx.AsyncClient(timeout=30) as client:
+    retry_strategy = httpx.Retry(
+        total=5,
+        backoff_factor=0.5,
+        status_forcelist=[500, 502, 503, 504],
+        allowed_methods=["GET"],
+    )
+
+    transport = httpx.AsyncHTTPTransport(retries=retry_strategy)
+    async with httpx.AsyncClient(timeout=60, transport=transport) as client:
         chunk_size = 512 * 1024
         async with client.stream('GET', source_filename) as resp:
             resp.raise_for_status()

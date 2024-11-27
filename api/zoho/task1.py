@@ -19,3 +19,6 @@ def lambda_handler(event, context):
         print("Conexão ao bucket realizada com sucesso!")
     except Exception as e:
         print(f"Erro ao conectar ao bucket: {e}")
+
+def handler():
+    return lambda_handler({}, {})
