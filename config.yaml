@@ -11,4 +11,8 @@ db:
   zoho:
     instance:
       ip: 54.174.251.9
+      port: 5432
       name: "ec2-autoprovision"
+    database: "autoprovision"
+    user: "postgres"
+    password: "postgres"
