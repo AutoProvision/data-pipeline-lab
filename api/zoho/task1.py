@@ -2,7 +2,7 @@ import os
 import boto3
 
 s3_client = boto3.client('s3')
-ec2_client = boto3.client('ec2')
+ec2_client = boto3.client('ec2', region_name='us-east-1')
 
 BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 
