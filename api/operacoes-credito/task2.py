@@ -5,12 +5,14 @@ import pyarrow.parquet as pq
 from io import BytesIO
 import numpy as np
 import boto3
+import os
 
-s3 = boto3.client('s3')
+s3_client = boto3.client('s3')
 
-bucket_source = 'autop-staging'
-bucket_dest = 'autop-raw'
-prefix_source = 'banco-central/operacoes-credito'
+SRC_BUCKET_NAME = os.getenv("BUCKET_STAGING_NAME")
+SRC_PATH = 'banco-central/operacoes-credito'
+DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
+DEST_PATH = 'banco-central/operacoes-credito'
 
 def dataframefy(f):
     df = pd.read_csv(f, sep=';', encoding='utf-8-sig')
@@ -55,7 +57,7 @@ def dataframefy(f):
 
 def file_exists(bucket, key):
     try:
-        s3.head_object(Bucket=bucket, Key=key)
+        s3_client.head_object(Bucket=bucket, Key=key)
         return True
     except Exception:
         return False
@@ -65,16 +67,16 @@ def lambda_handler(event, context):
     MONTHS = event['months']
 
     for MONTH in MONTHS:
-        parquet_key = f'{prefix_source}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
+        parquet_key = f'{DEST_PATH}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
 
-        if file_exists(bucket_dest, parquet_key):
+        if file_exists(DEST_BUCKET_NAME, parquet_key):
             print(f"Arquivo {parquet_key} já existe. Sem dados novos.")
             continue
 
-        zip_key = f'{prefix_source}/{YEAR}/planilha.zip'
+        zip_key = f'{DEST_PATH}/{YEAR}/planilha.zip'
         print(f'Processando arquivo: {zip_key}')
 
-        zip_obj = s3.get_object(Bucket=bucket_source, Key=zip_key)
+        zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=zip_key)
         zip_data = zip_obj['Body'].read()
         zip_file = zipfile.ZipFile(BytesIO(zip_data))
 
@@ -88,24 +90,55 @@ def lambda_handler(event, context):
                 pq.write_table(pa.Table.from_pandas(df), parquet_buffer)
                 parquet_buffer.seek(0)
 
-                s3.upload_fileobj(parquet_buffer, bucket_dest, parquet_key)
+                s3_client.upload_fileobj(parquet_buffer, DEST_BUCKET_NAME, parquet_key)
                 print(f'Arquivo {parquet_key} enviado com sucesso')
         else:
             print(f'Arquivo {csv_file_name} não encontrado no ZIP.')
 
-    lambda_client = boto3.client('lambda')
-    response = lambda_client.invoke(
-        FunctionName='autoprovision-raw-to-trusted',
-        InvocationType='Event'
-    )
+def handler():
+    # Vamos começar com a parte de acessar o bucket de origem e buscar a lista dos arquivos .zip.
 
-    status_code = response['StatusCode']
-    if status_code == 202:
-        print('Lambda chamada com sucesso.')
-    else:
-        print(f'Erro ao chamar a Lambda: {status_code}')
+    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
 
-    return {
-        'statusCode': 200,
-        'body': 'Segunda Lambda executada e terceira Lambda chamada!',
-    }
+    files = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.zip')]
+    files.sort(reverse=True)
+    latest_file = files[0]
+
+    # Agora vamos pegar o ano necessário para o processamento.
+
+    YEAR = latest_file[-12:-8]
+
+    # Vamos abrir esse arquivo e checar todos os meses necessários para o processamento.
+
+    zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=latest_file)
+    zip_data = zip_obj['Body'].read()
+    zip_file = zipfile.ZipFile(BytesIO(zip_data))
+
+    MONTHS = []
+    for file in zip_file.namelist():
+        if file.endswith('.csv'):
+            MONTHS.append(file[-6:-4])
+    
+    # Vamos processar mês por mês usando o dataframefy() e salvar em arquivos parquet no bucket de destino, assim como o código original.
+
+    for MONTH in MONTHS:
+        parquet_key = f'{DEST_PATH}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
+
+        if file_exists(DEST_BUCKET_NAME, parquet_key):
+            print(f"Arquivo {parquet_key} já existe. Sem dados novos.")
+            continue
+
+        csv_file_name = f'planilha_{YEAR}{MONTH}.csv'
+
+        if csv_file_name in zip_file.namelist():
+            with zip_file.open(csv_file_name) as f:
+                df = dataframefy(f)
+
+                parquet_buffer = BytesIO()
+                pq.write_table(pa.Table.from_pandas(df), parquet_buffer)
+                parquet_buffer.seek(0)
+
+                s3_client.upload_fileobj(parquet_buffer, DEST_BUCKET_NAME, parquet_key)
+                print(f'Arquivo {parquet_key} enviado com sucesso')
+        else:
+            print(f'Arquivo {csv_file_name} não encontrado no ZIP.')
