@@ -79,7 +79,7 @@ def lambda_handler(event, context):
     for file in zip_file.namelist():
         if file.endswith('.csv'):
             MONTHS.append(file[-6:-4])
-    
+
     for MONTH in MONTHS:
         parquet_key = f'{DEST_PATH}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
 
