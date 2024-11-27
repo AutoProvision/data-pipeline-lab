@@ -1,15 +1,17 @@
 import boto3
 import pandas as pd
 from io import BytesIO
+import os
+
+s3_client = boto3.client('s3')
+
+SRC_BUCKET_NAME = os.getenv("BUCKET_TRUSTED_NAME")
+SRC_PATH = 'banco-central/operacoes-credito/df.parquet'
+DEST_BUCKET_NAME = os.getenv("BUCKET_REFINED_NAME")
+DEST_PATH = 'banco-central/operacoes-credito/df.parquet'
 
 def lambda_handler(event, context):
-    s3 = boto3.client('s3')
-    bucket_name = 'autop-trusted'
-    key = 'banco-central/operacoes-credito/df_trusted.parquet'
-    bucket_trusted = 'autop-refined'
-    output_key = 'banco-central/operacoes-credito/df_refined.parquet'
-
-    obj = s3.get_object(Bucket=bucket_name, Key=key)
+    obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
     df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
 
     df['vl_carteira_problematica'] = df['vl_ativo_problematico'] - df['vl_carteira_inadimplida_arrastada']
@@ -28,9 +30,7 @@ def lambda_handler(event, context):
     output_buffer = BytesIO()
     df.to_parquet(output_buffer, index=False, engine='pyarrow')
 
-    s3.put_object(Bucket=bucket_trusted, Key=output_key, Body=output_buffer.getvalue())
+    s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=output_buffer.getvalue())
 
-    return {
-        'statusCode': 200,
-        'body': 'Processamento e upload concluídos com sucesso.'
-    }
+def handler():
+    return lambda_handler({}, {})

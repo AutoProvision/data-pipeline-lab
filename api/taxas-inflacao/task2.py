@@ -2,59 +2,43 @@ import os
 import pandas as pd
 import boto3
 from datetime import datetime
+from io import BytesIO
 
 s3_client = boto3.client('s3')
 
+TODAY = datetime.now().strftime('%Y-%m-%d')
+SRC_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
+SRC_PATH = f"banco-central/taxas-inflacao/{TODAY}/df.parquet"
+DEST_BUCKET_NAME = os.getenv("BUCKET_TRUSTED_NAME")
+DEST_PATH = f'banco-central/taxas-inflacao/{TODAY}/df.parquet'
+
 def lambda_handler(event, context):
-    date_str = datetime.now().strftime('%Y-%m-%d')
+    obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
+    df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
 
-    source_bucket = 'autoprovision-datalake-raw'
-    source_prefix = 'banco-central/taxas-inflacao/'
-    destination_bucket = 'autoprovision-datalake-trusted'
+    df['ano'] = df['Ano'].str.extract(r'(\d+)').astype(int)
+    df['meta'] = df['Meta (%)'].str.replace(',', '.').astype(float)
+    df['tolerancia'] = df['Tamanhodo intervalo +/- (p.p.)'].str.replace(',', '.').astype(float)
+    df['inflacao_efetiva'] = df['Inflação efetiva(Variação do IPCA, %)'].str.replace(',', '.').astype(float)
 
-    response = s3_client.list_objects_v2(Bucket=source_bucket, Prefix=source_prefix)
+    df.drop(
+        [
+            'Inflação efetiva(Variação do IPCA, %)',
+            'Tamanhodo intervalo +/- (p.p.)',
+            'Intervalode tolerância (%)',
+            'Meta (%)',
+            'Data',
+            'Norma',
+            'Ano',
+        ],
+        axis=1,
+        inplace=True
+    )
+    
+    buffer = BytesIO()
+    df.to_parquet(buffer, index=False, engine='pyarrow')
 
-    if 'Contents' not in response:
-        return {
-            'statusCode': 404,
-            'body': 'Nenhum arquivo encontrado na pasta especificada.'
-        }
+    s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=buffer.getvalue())
 
-    for obj in response['Contents']:
-        source_key = obj['Key']
-
-        if source_key.endswith('.parquet'):
-            local_parquet_path = '/tmp/' + os.path.basename(source_key)
-            s3_client.download_file(source_bucket, source_key, local_parquet_path)
-
-            df = pd.read_parquet(local_parquet_path)
-
-            df['ano'] = df['Ano'].str.extract(r'(\d+)').astype(int)
-            df['meta'] = df['Meta (%)'].str.replace(',', '.').astype(float)
-            df['tolerancia'] = df['Tamanhodo intervalo +/- (p.p.)'].str.replace(',', '.').astype(float)
-            df['inflacao_efetiva'] = df['Inflação efetiva(Variação do IPCA, %)'].str.replace(',', '.').astype(float)
-
-            df.drop(
-                [
-                    'Inflação efetiva(Variação do IPCA, %)',
-                    'Tamanhodo intervalo +/- (p.p.)',
-                    'Intervalode tolerância (%)',
-                    'Meta (%)',
-                    'Data',
-                    'Norma',
-                    'Ano',
-                ],
-                axis=1,
-                inplace=True
-            )
-
-            processed_file_path = f'/tmp/arquivo-processado-{date_str}-{os.path.basename(source_key)}'
-            df.to_parquet(processed_file_path, index=False)
-
-            destination_key = f'banco-central/taxas-inflacao/{date_str}/bcb_metas_inflacao-{date_str}-trusted.parquet'
-            s3_client.upload_file(processed_file_path, destination_bucket, destination_key)
-
-    return {
-        'statusCode': 200,
-        'body': 'Arquivos processados e salvos com sucesso!'
-    }
+def handler():
+    return lambda_handler({}, {})

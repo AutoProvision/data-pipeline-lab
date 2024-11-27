@@ -1,15 +1,17 @@
 import boto3
 import pandas as pd
 from io import BytesIO
+import os
+
+s3_client = boto3.client('s3')
+
+SRC_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
+SRC_PATH = 'banco-central/operacoes-credito'
+DEST_BUCKET = os.getenv("BUCKET_TRUSTED_NAME")
+DEST_PATH = 'banco-central/operacoes-credito/df.parquet'
 
 def lambda_handler(event, context):
-
-    s3 = boto3.client('s3')
-    bucket_name = 'autop-raw'
-    prefix = 'banco-central/operacoes-credito'
-    bucket_trusted = 'autop-trusted'
-
-    response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
+    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
     files = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.parquet')]
 
     MONETARY_COLS = ['carteira_ativa', 'carteira_inadimplida_arrastada', 'ativo_problematico']
@@ -20,7 +22,7 @@ def lambda_handler(event, context):
     full_df = pd.DataFrame()
 
     for file in files:
-        obj = s3.get_object(Bucket=bucket_name, Key=file)
+        obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=file)
         df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
         df['porte'] = df['porte'].str.strip()
         df = df[~df['porte'].isin(['PJ - Indisponível', 'PF - Indisponível'])]
@@ -39,26 +41,12 @@ def lambda_handler(event, context):
             elif column in DATE_COLS:
                 df[column] = pd.to_datetime(df[column], format='%Y-%m-%d')
                 df = df.rename(columns={column: f'dt_{column}'})
-        print(file)
         full_df = pd.concat([full_df, df], ignore_index=True)
-
-
-
-    parquet_key = f'{prefix}/df_trusted.parquet'
 
     buffer = BytesIO()
     full_df.to_parquet(buffer, index=False)
 
-    s3.put_object(Bucket=bucket_trusted, Key=parquet_key, Body=buffer.getvalue())
+    s3_client.put_object(Bucket=DEST_BUCKET, Key=DEST_PATH, Body=buffer.getvalue())
 
-    lambda_client = boto3.client('lambda')
-    response = lambda_client.invoke(
-        FunctionName='autoprovision-trusted-to-refined',
-        InvocationType='Event'
-    )
-
-    status_code = response['StatusCode']
-    if status_code == 202:
-        print('Lambda chamada com sucesso.')
-    else:
-        print(f'Erro ao chamar a Lambda: {status_code}')
+def handler():
+    return lambda_handler({}, {})

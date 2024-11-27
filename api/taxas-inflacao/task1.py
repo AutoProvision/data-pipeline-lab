@@ -9,13 +9,11 @@ from datetime import datetime
 
 s3_client = boto3.client('s3')
 
-BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
+TODAY = datetime.now().strftime('%Y-%m-%d')
+DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
+DEST_PATH = f'banco-central/taxas-inflacao/{TODAY}/df.parquet'
 
 def lambda_handler(event, context):
-
-    date_str = datetime.now().strftime('%Y-%m-%d')
-    s3_key = f'banco-central/taxas-inflacao/{date_str}/bcb_metas_inflacao-{date_str}.parquet'
-
     response = httpx.get('https://www.bcb.gov.br/api/paginasite/sitebcb/controleinflacao/historicometas').json()['conteudo']
 
     soup = BeautifulSoup(f'<div>{response}</div>', 'html.parser')
@@ -52,5 +50,4 @@ def lambda_handler(event, context):
     df.to_parquet(buffer, index=False)
 
     buffer.seek(0)
-
-    s3_client.upload_fileobj(buffer, BUCKET_NAME, s3_key)
+    s3_client.upload_fileobj(buffer, DEST_BUCKET_NAME, DEST_PATH)
