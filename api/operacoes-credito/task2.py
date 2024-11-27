@@ -63,22 +63,29 @@ def file_exists(bucket, key):
         return False
 
 def lambda_handler(event, context):
-    YEAR = event['year']
-    MONTHS = event['months']
+    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
 
+    files = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.zip')]
+    files.sort(reverse=True)
+    latest_file = files[0]
+
+    YEAR = latest_file[-12:-8]
+
+    zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=latest_file)
+    zip_data = zip_obj['Body'].read()
+    zip_file = zipfile.ZipFile(BytesIO(zip_data))
+
+    MONTHS = []
+    for file in zip_file.namelist():
+        if file.endswith('.csv'):
+            MONTHS.append(file[-6:-4])
+    
     for MONTH in MONTHS:
         parquet_key = f'{DEST_PATH}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
 
         if file_exists(DEST_BUCKET_NAME, parquet_key):
             print(f"Arquivo {parquet_key} já existe. Sem dados novos.")
             continue
-
-        zip_key = f'{DEST_PATH}/{YEAR}/planilha.zip'
-        print(f'Processando arquivo: {zip_key}')
-
-        zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=zip_key)
-        zip_data = zip_obj['Body'].read()
-        zip_file = zipfile.ZipFile(BytesIO(zip_data))
 
         csv_file_name = f'planilha_{YEAR}{MONTH}.csv'
 
@@ -96,49 +103,4 @@ def lambda_handler(event, context):
             print(f'Arquivo {csv_file_name} não encontrado no ZIP.')
 
 def handler():
-    # Vamos começar com a parte de acessar o bucket de origem e buscar a lista dos arquivos .zip.
-
-    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
-
-    files = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.zip')]
-    files.sort(reverse=True)
-    latest_file = files[0]
-
-    # Agora vamos pegar o ano necessário para o processamento.
-
-    YEAR = latest_file[-12:-8]
-
-    # Vamos abrir esse arquivo e checar todos os meses necessários para o processamento.
-
-    zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=latest_file)
-    zip_data = zip_obj['Body'].read()
-    zip_file = zipfile.ZipFile(BytesIO(zip_data))
-
-    MONTHS = []
-    for file in zip_file.namelist():
-        if file.endswith('.csv'):
-            MONTHS.append(file[-6:-4])
-    
-    # Vamos processar mês por mês usando o dataframefy() e salvar em arquivos parquet no bucket de destino, assim como o código original.
-
-    for MONTH in MONTHS:
-        parquet_key = f'{DEST_PATH}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
-
-        if file_exists(DEST_BUCKET_NAME, parquet_key):
-            print(f"Arquivo {parquet_key} já existe. Sem dados novos.")
-            continue
-
-        csv_file_name = f'planilha_{YEAR}{MONTH}.csv'
-
-        if csv_file_name in zip_file.namelist():
-            with zip_file.open(csv_file_name) as f:
-                df = dataframefy(f)
-
-                parquet_buffer = BytesIO()
-                pq.write_table(pa.Table.from_pandas(df), parquet_buffer)
-                parquet_buffer.seek(0)
-
-                s3_client.upload_fileobj(parquet_buffer, DEST_BUCKET_NAME, parquet_key)
-                print(f'Arquivo {parquet_key} enviado com sucesso')
-        else:
-            print(f'Arquivo {csv_file_name} não encontrado no ZIP.')
+    return lambda_handler({}, {})
