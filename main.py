@@ -7,6 +7,20 @@ from api import yaml_load
 import psutil
 import sys
 import time
+import subprocess
+
+def execute_handler_in_subprocess(file_path, module_name):
+    script = f"""
+import importlib.util
+spec = importlib.util.spec_from_file_location('{module_name}', '{file_path}')
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+if hasattr(module, 'handler'):
+    module.handler()
+"""
+    result = subprocess.run(["python3", "-c", script], capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr)
 
 def monitor_memory(log_file="memory_usage.log"):
     """Monitora o uso de memória do sistema e do processo e salva em um arquivo."""
@@ -58,18 +72,7 @@ def execute_handlers(base_path, folder_files):
             module_name = f"{folder}.{file[:-3]}"
 
             try:
-                spec = importlib.util.spec_from_file_location(module_name, file_path)
-                module = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(module)
-
-                if hasattr(module, 'handler'):
-                    module.handler()
-                else:
-                    errors[f"{folder}/{file}"] = "handler() not found"
-                del module
-                if module_name in sys.modules:
-                    del sys.modules[module_name]
-
+                execute_handler_in_subprocess(file_path, module_name)
             except Exception as e:
                 errors[f"{folder}/{file}"] = traceback.format_exc()
 

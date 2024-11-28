@@ -13,6 +13,7 @@ DEST_PATH = 'banco-central/operacoes-credito/df.parquet'
 def lambda_handler(event, context):
     obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
     df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
+    del obj
 
     df['vl_carteira_problematica'] = df['vl_ativo_problematico'] - df['vl_carteira_inadimplida_arrastada']
 
@@ -29,8 +30,10 @@ def lambda_handler(event, context):
 
     output_buffer = BytesIO()
     df.to_parquet(output_buffer, index=False, engine='pyarrow')
+    del df
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=output_buffer.getvalue())
+    del output_buffer
 
 def handler():
     return lambda_handler({}, {})
