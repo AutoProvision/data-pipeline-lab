@@ -25,6 +25,11 @@ def monitor_memory(log_file="memory_usage.log"):
                 f"Memória Disponível: {available_memory:.2f} MB, "
                 f"Memória do Processo: {process_memory:.2f} MB\n"
             )
+            print(
+                f"Memória Total: {total_memory:.2f} MB, "
+                f"Memória Disponível: {available_memory:.2f} MB, "
+                f"Memória do Processo: {process_memory:.2f} MB\n"
+            )
             log.flush()
 
             time.sleep(1)
