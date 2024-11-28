@@ -51,3 +51,6 @@ def lambda_handler(event, context):
 
     buffer.seek(0)
     s3_client.upload_fileobj(buffer, DEST_BUCKET_NAME, DEST_PATH)
+
+def handler():
+    return lambda_handler({}, {})

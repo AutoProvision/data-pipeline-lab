@@ -51,5 +51,5 @@ def lambda_handler(event, context):
     del full_df, buffer, df, obj, response, files, MONETARY_COLS, CATEGORY_COLS, QUANTITY_COLS, DATE_COLS, file, column, valores_a_manter
 
 def handler():
-    # return lambda_handler({}, {})
+    return lambda_handler({}, {})
     pass
