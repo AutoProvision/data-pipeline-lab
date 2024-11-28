@@ -1,6 +1,5 @@
 import pandas as pd
 import random
-import numpy as np
 from faker import Faker
 
 def gerar_cnae_nota():
@@ -42,6 +41,7 @@ def gerar_dados_sinteticos(num_amostras):
         }
 
         chave_aleatoria = random.choice(list(notas_modalidades.keys()))
+        print(chave_aleatoria)
 
         return chave_aleatoria, notas_modalidades[chave_aleatoria]
 
