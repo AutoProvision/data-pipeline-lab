@@ -33,4 +33,5 @@ def lambda_handler(event, context):
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=output_buffer.getvalue())
 
 def handler():
-    return lambda_handler({}, {})
+    # return lambda_handler({}, {})
+    pass

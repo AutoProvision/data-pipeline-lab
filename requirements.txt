@@ -10,3 +10,4 @@ bs4
 PyYAML
 psycopg2-binary
 psutil
+faker

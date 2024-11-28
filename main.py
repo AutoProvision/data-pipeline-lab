@@ -8,32 +8,6 @@ import psutil
 import sys
 import time
 
-def monitor_memory(log_file="memory_usage.log"):
-    """Monitora o uso de memória do sistema e do processo e salva em um arquivo."""
-    process = psutil.Process(os.getpid())
-
-    with open(log_file, "a") as log:
-        while True:
-            mem = psutil.virtual_memory()
-            total_memory = mem.total / (1024 ** 2)  # Em MB
-            available_memory = mem.available / (1024 ** 2)  # Em MB
-
-            process_memory = process.memory_info().rss / (1024 ** 2)  # Em MB
-
-            log.write(
-                f"Memória Total: {total_memory:.2f} MB, "
-                f"Memória Disponível: {available_memory:.2f} MB, "
-                f"Memória do Processo: {process_memory:.2f} MB\n"
-            )
-            log.flush()
-
-            time.sleep(1)
-
-
-def print_memory_usage():
-    process = psutil.Process(os.getpid())
-    print(f"Uso de memória: {process.memory_info().rss / 1024 ** 2:.2f} MB")
-
 def get_files_by_folder(base_path):
     folder_files = {}
     task_pattern = re.compile(r"task\d+\.py")
@@ -58,22 +32,17 @@ def execute_handlers(base_path, folder_files):
             module_name = f"{folder}.{file[:-3]}"
 
             try:
-                print_memory_usage()
                 spec = importlib.util.spec_from_file_location(module_name, file_path)
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
-
-                print_memory_usage()
 
                 if hasattr(module, 'handler'):
                     module.handler()
                 else:
                     errors[f"{folder}/{file}"] = "handler() not found"
-                print_memory_usage()
                 del module
                 if module_name in sys.modules:
                     del sys.modules[module_name]
-                print_memory_usage()
 
             except Exception as e:
                 errors[f"{folder}/{file}"] = traceback.format_exc()
@@ -83,10 +52,6 @@ def execute_handlers(base_path, folder_files):
     return errors
 
 def main():
-    from threading import Thread
-    monitor_thread = Thread(target=monitor_memory, daemon=True)
-    monitor_thread.start()
-
     base_path = './api'
 
     yaml_load.load_yaml_as_env()

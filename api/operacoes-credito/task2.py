@@ -99,4 +99,5 @@ def lambda_handler(event, context):
                 s3_client.upload_fileobj(parquet_buffer, DEST_BUCKET_NAME, parquet_key)
 
 def handler():
-    return lambda_handler({}, {})
+    # return lambda_handler({}, {})
+    pass
