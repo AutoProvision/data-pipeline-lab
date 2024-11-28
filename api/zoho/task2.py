@@ -75,4 +75,5 @@ def lambda_handler(event, context):
     print(df.head(20))
 
 def handler():
-    return lambda_handler({}, {})
+    # return lambda_handler({}, {})
+    pass
