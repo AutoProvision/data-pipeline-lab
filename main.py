@@ -5,6 +5,7 @@ import traceback
 import gc
 from api import yaml_load
 import psutil
+import sys
 
 def print_memory_usage():
     process = psutil.Process(os.getpid())
@@ -53,7 +54,7 @@ def execute_handlers(base_path, folder_files):
 
             except Exception as e:
                 errors[f"{folder}/{file}"] = traceback.format_exc()
-            
+
             gc.collect()
 
     return errors

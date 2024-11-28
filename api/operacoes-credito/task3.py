@@ -48,5 +48,7 @@ def lambda_handler(event, context):
 
     s3_client.put_object(Bucket=DEST_BUCKET, Key=DEST_PATH, Body=buffer.getvalue())
 
+    del full_df, buffer, df, obj, response, files, MONETARY_COLS, CATEGORY_COLS, QUANTITY_COLS, DATE_COLS, file, column, valores_a_manter
+
 def handler():
     return lambda_handler({}, {})

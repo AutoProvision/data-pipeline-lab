@@ -24,6 +24,8 @@ def find_latest_year():
         if li is not None:
             zip_url = li.find('a', class_='resource-url-analytics').get('href')
 
+    del response, soup, main_ul, li_list, li
+
     return zip_url[len(zip_url) - 8: len(zip_url) - 4]
 
 async def download_and_upload_zip(src_path, dest_path):
