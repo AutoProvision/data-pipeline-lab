@@ -74,7 +74,7 @@ def gerar_dados_sinteticos(num_amostras):
 
         dados.append([nome, cpf, valor, cnae, peso_cnae, descricao_cnae, modalidade, peso_modalidade, vl_carteira_pagar, parcelas_restantes, qtd_emprestimo_ativos, peso_historico, vl_renda, peso_extra])
 
-    df = pd.DataFrame(dados, columns=['nome', 'cpf', 'valor', 'cnae', 'peso_cnae', 'descricao_cnae', 'modalidade', 'peso_modalidade', 'vl_carteira_inadimplida', 'parcelas_restantes', 'qtd_emprestimo_ativos', 'peso_historico', 'vl_renda', 'peso_extra'])
+    df = pd.DataFrame(dados, columns=['nome', 'cpf', 'valor', 'cnae', 'peso_cnae', 'descricao_cnae', 'modalidade', 'peso_modalidade', 'vl_carteira_pagar', 'parcelas_restantes', 'qtd_emprestimo_ativos', 'peso_historico', 'vl_renda', 'peso_extra'])
     return df
 
 def lambda_handler(event, context):
