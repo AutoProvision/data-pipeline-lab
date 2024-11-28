@@ -47,7 +47,7 @@ def execute_handlers(base_path, folder_files):
     errors = {}
     for folder, files in folder_files.items():
         for file in files:
-            print(f"Executando handler de {folder}/{file}")
+            print(f"### Executando handler de {folder}/{file}")
             file_path = os.path.join(base_path, folder, file)
             module_name = f"{folder}.{file[:-3]}"
 
