@@ -1,8 +1,7 @@
 import boto3
-import os
+import pandas as pd
 from io import BytesIO
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, when
+import os
 
 s3_client = boto3.client('s3')
 
@@ -12,52 +11,28 @@ DEST_BUCKET_NAME = os.getenv("BUCKET_REFINED_NAME")
 DEST_PATH = 'banco-central/operacoes-credito/df.parquet'
 
 def lambda_handler(event, context):
-    print("1")
-    spark = SparkSession.builder.appName("ProcessamentoS3").getOrCreate()
-    print("2")
-
     obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
-    print("3")
-    df_bytes = BytesIO(obj['Body'].read())
-    print("4")
+    df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
     del obj
 
-    df = spark.read.parquet(df_bytes)
-    print("5")
+    df['vl_carteira_problematica'] = df['vl_ativo_problematico'] - df['vl_carteira_inadimplida_arrastada']
 
-    df = df.withColumn(
-        "vl_carteira_problematica",
-        (col("vl_ativo_problematico") - col("vl_carteira_inadimplida_arrastada")).cast("double")
-    )
-    print("6")
+    df['vl_carteira_problematica'] = df['vl_carteira_problematica'].clip(lower=0)
 
-    df = df.withColumn(
-        "vl_carteira_problematica",
-        when(col("vl_carteira_problematica") < 0, 0).otherwise(col("vl_carteira_problematica"))
-    )
-    print("7")
+    df['vl_carteira_ativa'] = df['vl_carteira_ativa'] - df['vl_carteira_problematica']
+    df.rename(columns={ 'vl_carteira_ativa': 'vl_carteira_saudavel' }, inplace=True)
 
-    df = df.withColumn(
-        "vl_carteira_saudavel",
-        (col("vl_carteira_ativa") - col("vl_carteira_problematica")).cast("double")
-    ).drop("vl_carteira_ativa")
-    print("8")
+    df['vl_carteira_saudavel'] = df['vl_carteira_saudavel'] / df['qt_numero_de_operacoes']
+    df['vl_carteira_problematica'] = df['vl_carteira_problematica'] / df['qt_numero_de_operacoes']
+    df['vl_carteira_inadimplida_arrastada'] = df['vl_carteira_inadimplida_arrastada'] / df['qt_numero_de_operacoes']
 
-    for col_name in ["vl_carteira_saudavel", "vl_carteira_problematica", "vl_carteira_inadimplida_arrastada"]:
-        df = df.withColumn(col_name, col(col_name) / col("qt_numero_de_operacoes"))
-    print("9")
-
-    df = df.drop("qt_numero_de_operacoes")
-    print("10")
+    df.drop(columns=['qt_numero_de_operacoes'], inplace=True)
 
     output_buffer = BytesIO()
-    print("11")
-    df.write.parquet(output_buffer)
+    df.to_parquet(output_buffer, index=False, engine='pyarrow')
     del df
-    print("12")
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=output_buffer.getvalue())
-    print("13")
     del output_buffer
 
 def handler():

@@ -13,4 +13,3 @@ psutil
 faker
 openpyxl
 scikit-learn
-pyspark
