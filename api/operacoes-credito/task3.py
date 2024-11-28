@@ -52,4 +52,3 @@ def lambda_handler(event, context):
 
 def handler():
     return lambda_handler({}, {})
-    pass
