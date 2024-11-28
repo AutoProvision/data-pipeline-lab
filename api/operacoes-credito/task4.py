@@ -36,4 +36,5 @@ def lambda_handler(event, context):
     del output_buffer
 
 def handler():
-    return lambda_handler({}, {})
+    # return lambda_handler({}, {})
+    pass

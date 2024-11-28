@@ -6,8 +6,12 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
 import boto3
 import io
+import os
 
 s3_client = boto3.client('s3')
+
+DEST_BUCKET_NAME = os.getenv("BUCKET_TRUSTED_NAME")
+DEST_PATH = 'banco-central/operacoes-credito'
 
 def gerar_cnae_nota():
     df_cnae = pd.read_excel("cnaes_tratados.xlsx")
@@ -128,12 +132,12 @@ def lambda_handler(event, context):
     buffer = io.BytesIO()
     cluster_classificado[colunas_originais].to_excel(buffer, index=False, index_label=False)
     buffer.seek(0)
-    s3_client.upload_fileobj(buffer, 'datalake-credito', 'banco-central/operacoes-credito/resultado_modelo.xlsx')
+    s3_client.upload_fileobj(buffer, DEST_BUCKET_NAME, f"{DEST_PATH}/resultado_modelo.xlsx")
 
     buffer = io.BytesIO()
     cluster_classificado[colunas_originais].to_csv(buffer, index=False)
     buffer.seek(0)
-    s3_client.upload_fileobj(buffer, 'datalake-credito', 'banco-central/operacoes-credito/resultado_modelo.csv')
+    s3_client.upload_fileobj(buffer, DEST_BUCKET_NAME, f"{DEST_PATH}/resultado_modelo.csv")
 
 def handler():
     return lambda_handler({}, {})
