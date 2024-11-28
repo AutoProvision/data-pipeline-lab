@@ -2,6 +2,7 @@ import os
 import re
 import importlib.util
 import traceback
+import gc
 from api import yaml_load
 
 def get_files_by_folder(base_path):
@@ -36,8 +37,16 @@ def execute_handlers(base_path, folder_files):
                     module.handler()
                 else:
                     errors[f"{folder}/{file}"] = "handler() not found"
+                
+                del module
+                if module_name in sys.modules:
+                    del sys.modules[module_name]
+
             except Exception as e:
                 errors[f"{folder}/{file}"] = traceback.format_exc()
+            
+            gc.collect()
+
     return errors
 
 def main():

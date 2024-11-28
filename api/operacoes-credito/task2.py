@@ -69,11 +69,7 @@ def lambda_handler(event, context):
     files.sort(reverse=True)
     latest_file = files[0]
 
-    print(latest_file)
-
     YEAR = latest_file[-17:-13]
-
-    print(YEAR)
 
     zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=latest_file)
     zip_data = zip_obj['Body'].read()
@@ -88,11 +84,9 @@ def lambda_handler(event, context):
         parquet_key = f'{DEST_PATH}/{YEAR}/{YEAR}-{MONTH}/planilha_{YEAR}{MONTH}.parquet'
 
         if file_exists(DEST_BUCKET_NAME, parquet_key):
-            print(f"Arquivo {parquet_key} já existe. Sem dados novos.")
             continue
 
         csv_file_name = f'planilha_{YEAR}{MONTH}.csv'
-        print(csv_file_name)
 
         if csv_file_name in zip_file.namelist():
             with zip_file.open(csv_file_name) as f:
