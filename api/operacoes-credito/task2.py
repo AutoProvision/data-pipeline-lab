@@ -69,6 +69,8 @@ def lambda_handler(event, context):
     files.sort(reverse=True)
     latest_file = files[0]
 
+    print(latest_file)
+
     YEAR = latest_file[-7:-3]
 
     zip_obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=latest_file)
