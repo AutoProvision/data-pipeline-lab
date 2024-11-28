@@ -8,11 +8,12 @@ import time
 import subprocess
 
 def monitor_memory():
-    mem = psutil.virtual_memory()
-    available_memory = mem.available / (1024 ** 2)
+    while True:
+        mem = psutil.virtual_memory()
+        available_memory = mem.available / (1024 ** 2)
 
-    print(f"Memória ainda disponível: {available_memory:.2f} MB")
-    time.sleep(1)
+        print(f"Memória ainda disponível: {available_memory:.2f} MB")
+        time.sleep(1)
 
 def get_files_by_folder(base_path):
     folder_files = {}
