@@ -11,3 +11,4 @@ PyYAML
 psycopg2-binary
 psutil
 faker
+openpyxl
