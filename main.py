@@ -8,6 +8,27 @@ import psutil
 import sys
 import time
 
+def monitor_memory(log_file="memory_usage.log"):
+    """Monitora o uso de memória do sistema e do processo e salva em um arquivo."""
+    process = psutil.Process(os.getpid())
+
+    with open(log_file, "a") as log:
+        while True:
+            mem = psutil.virtual_memory()
+            total_memory = mem.total / (1024 ** 2)
+            available_memory = mem.available / (1024 ** 2)
+
+            process_memory = process.memory_info().rss / (1024 ** 2)
+
+            log.write(
+                f"Memória Total: {total_memory:.2f} MB, "
+                f"Memória Disponível: {available_memory:.2f} MB, "
+                f"Memória do Processo: {process_memory:.2f} MB\n"
+            )
+            log.flush()
+
+            time.sleep(1)
+
 def get_files_by_folder(base_path):
     folder_files = {}
     task_pattern = re.compile(r"task\d+\.py")
@@ -52,6 +73,10 @@ def execute_handlers(base_path, folder_files):
     return errors
 
 def main():
+    from threading import Thread
+    monitor_thread = Thread(target=monitor_memory, daemon=True)
+    monitor_thread.start()
+
     base_path = './api'
 
     yaml_load.load_yaml_as_env()
