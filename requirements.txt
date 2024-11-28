@@ -12,3 +12,4 @@ psycopg2-binary
 psutil
 faker
 openpyxl
+scikit-learn

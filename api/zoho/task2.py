@@ -1,6 +1,9 @@
 import pandas as pd
 import random
+import numpy as np
 from faker import Faker
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import MinMaxScaler
 
 def gerar_cnae_nota():
     df_cnae = pd.read_excel("cnaes_tratados.xlsx")
@@ -72,8 +75,51 @@ def gerar_dados_sinteticos(num_amostras):
 
 def lambda_handler(event, context):
     df = gerar_dados_sinteticos(2000)
-    print(df.head(20))
+
+    dados = df[['peso_extra', 'peso_cnae', 'peso_historico', 'vl_carteira_pagar']]
+
+    scaler = MinMaxScaler()
+    dados_normalizados = scaler.fit_transform(dados)
+    dados_normalizados = pd.DataFrame(dados_normalizados, columns=dados.columns)
+
+    modelo_kmeans = KMeans(n_clusters=12, random_state=45, n_init = 'auto')
+    modelo_kmeans.fit(dados_normalizados)
+
+    dados_analise = pd.DataFrame()
+    dados_analise[dados_normalizados.columns] = dados_normalizados
+    dados_analise[dados_normalizados.columns] = scaler.inverse_transform(dados_normalizados)
+
+    dados_analise['cluster'] = modelo_kmeans.labels_
+    cluster_media = dados_analise.groupby('cluster').mean()
+    cluster_media.T
+
+    cluster_classificado = dados_analise.groupby('cluster').mean()
+
+    cluster_classificado['media_geral'] = cluster_classificado.mean(axis=1)
+
+    cluster_classificado_sorted = cluster_classificado.sort_values(by='media_geral')
+
+    n_clusters = len(cluster_classificado_sorted)
+    tercio = n_clusters // 3
+
+    cluster_classificado_sorted['risco'] = np.where(cluster_classificado_sorted.index <= tercio, 'Alto', np.where(cluster_classificado_sorted.index <= 2 * tercio, 'Médio', 'Baixo'))
+
+    cluster_classificado = dados_analise.merge(cluster_classificado_sorted[['risco']], left_on='cluster', right_index=True, how='left')
+    cluster_classificado = cluster_classificado.merge(df, left_index=True, right_index=True, how='left')
+
+    for column in cluster_classificado:
+        if str(column).endswith('_y'):
+            cluster_classificado.drop(columns=column, inplace=True)
+        if str(column).endswith('_x'):
+            cluster_classificado.rename(columns={column : column.replace('_x','')}, inplace=True)
+
+    cluster_classificado['provisionamento'] = cluster_classificado['risco'].apply(
+        lambda x: 0.10 if x == 'Alto' else (0.05 if x == 'Médio' else 0.02)
+    )
+
+    colunas_originais = ['nome','cpf','valor','cnae','descricao_cnae','modalidade','parcelas_restantes','qtd_emprestimo_ativos','cluster','provisionamento','vl_carteira_pagar','vl_renda','peso_extra','peso_cnae','peso_historico','risco']
+
+    cluster_classificado[colunas_originais].to_excel('resultado_modelo.xlsx',index=False, index_label=False)
 
 def handler():
-    # return lambda_handler({}, {})
-    pass
+    return lambda_handler({}, {})
