@@ -4,6 +4,10 @@ import numpy as np
 from faker import Faker
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
+import boto3
+import io
+
+s3_client = boto3.client('s3')
 
 def gerar_cnae_nota():
     df_cnae = pd.read_excel("cnaes_tratados.xlsx")
@@ -119,7 +123,17 @@ def lambda_handler(event, context):
 
     colunas_originais = ['nome','cpf','valor','cnae','descricao_cnae','modalidade','parcelas_restantes','qtd_emprestimo_ativos','cluster','provisionamento','vl_carteira_pagar','vl_renda','peso_extra','peso_cnae','peso_historico','risco']
 
-    cluster_classificado[colunas_originais].to_excel('resultado_modelo.xlsx',index=False, index_label=False)
+    print(cluster_classificado.dtypes)
+
+    buffer = io.BytesIO()
+    cluster_classificado[colunas_originais].to_excel(buffer, index=False, index_label=False)
+    buffer.seek(0)
+    s3_client.upload_fileobj(buffer, 'datalake-credito', 'banco-central/operacoes-credito/resultado_modelo.xlsx')
+
+    buffer = io.BytesIO()
+    cluster_classificado[colunas_originais].to_csv(buffer, index=False)
+    buffer.seek(0)
+    s3_client.upload_fileobj(buffer, 'datalake-credito', 'banco-central/operacoes-credito/resultado_modelo.csv')
 
 def handler():
     return lambda_handler({}, {})
