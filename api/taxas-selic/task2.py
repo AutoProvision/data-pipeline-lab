@@ -13,10 +13,9 @@ DEST_BUCKET_NAME = os.getenv("BUCKET_TRUSTED_NAME")
 DEST_PATH = f'banco-central/taxas-selic/{TODAY}/df.csv'
 
 def lambda_handler(event, context):
-    response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
-    csv_data = response['Body'].read()
+    obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
+    df = pd.read_csv(io.BytesIO(obj['Body'].read()), sep=';')
 
-    df = pd.read_csv(io.BytesIO(csv_data), sep=';')
     df['valor'] = df['valor'].str.replace(',', '.').astype(float)
     df['data'] = pd.to_datetime(df['data'], format='%d/%m/%Y')
 
