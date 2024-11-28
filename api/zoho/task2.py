@@ -129,8 +129,6 @@ def lambda_handler(event, context):
 
     colunas_originais = ['nome','cpf','valor','cnae','descricao_cnae','modalidade','parcelas_restantes','qtd_emprestimo_ativos','cluster','provisionamento','vl_carteira_pagar','vl_renda','peso_extra','peso_cnae','peso_historico','risco']
 
-    print(cluster_classificado.dtypes)
-
     buffer = io.BytesIO()
     cluster_classificado[colunas_originais].to_excel(buffer, index=False, index_label=False)
     buffer.seek(0)

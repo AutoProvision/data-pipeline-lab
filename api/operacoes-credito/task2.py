@@ -52,7 +52,6 @@ def dataframefy(f):
         'PF - Veículos',
     ]
     df = df[df['modalidade'].isin(valores_a_manter)]
-    print(df.columns)
     return df
 
 def file_exists(bucket, key):
@@ -99,5 +98,4 @@ def lambda_handler(event, context):
                 s3_client.upload_fileobj(parquet_buffer, DEST_BUCKET_NAME, parquet_key)
 
 def handler():
-    # return lambda_handler({}, {})
-    pass
+    return lambda_handler({}, {})
