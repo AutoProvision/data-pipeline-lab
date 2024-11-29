@@ -1,5 +1,3 @@
-print("1")
-
 import boto3
 import os
 import requests
@@ -8,14 +6,11 @@ import io
 import asyncio
 import aiohttp
 import json
-print("2")
 
 s3_client = boto3.client('s3')
 
-print("3")
 DEST_BUCKET_NAME = os.getenv("BUCKET_STAGING_NAME")
 DEST_PATH = 'banco-central/juros-bancarios'
-print("4")
 
 base_url = 'https://www.bcb.gov.br/api/servico/sitebcb'
 
@@ -72,24 +67,17 @@ async def process_parametros(session, data, df_parametros):
     await asyncio.gather(*tasks)
 
 async def main(df_datas, df_parametros):
-    print("d")
     async with aiohttp.ClientSession() as session:
-        print("e")
         for data in df_datas['InicioPeriodo'][::-1]:
-            print("f")
             print(f'Recuperando arquivos de {data}...')
 
             await process_parametros(session, data, df_parametros)
 
 def lambda_handler(event, context):
-    print("a")
     df_parametros = get_parametros()
     df_datas = get_datas()
-    print("b")
 
-    main(df_datas, df_parametros)
-    print("c")
+    asyncio.run(main(df_datas, df_parametros))
 
 def handler():
-    print("a?")
     return lambda_handler({}, {})

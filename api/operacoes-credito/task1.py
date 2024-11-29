@@ -62,5 +62,4 @@ def lambda_handler(event, context):
     loop.run_until_complete(download_and_upload_zip(SRC_PATH, DEST_PATH))
 
 def handler():
-    print("operacoes credito iniciadas")
     return lambda_handler({}, {})
