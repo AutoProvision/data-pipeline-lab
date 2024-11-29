@@ -86,4 +86,5 @@ def lambda_handler(event, context):
     print("c")
 
 def handler():
+    print("a?")
     return lambda_handler({}, {})
