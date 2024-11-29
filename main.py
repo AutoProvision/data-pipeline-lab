@@ -35,16 +35,17 @@ import importlib.util
 spec = importlib.util.spec_from_file_location('{module_name}', '{file_path}')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
-print("iniciando...")
 if hasattr(module, 'handler'):
-    print("iniciado")
     module.handler()
-else:
-    print("nao iniciado")
 """
-    result = subprocess.run(["python3", "-c", script], capture_output=True, text=True)
+    result = subprocess.run(
+        ["python3", "-c", script],
+        text=True,
+        stdout=None,
+        stderr=None
+    )
     if result.returncode != 0:
-        raise RuntimeError(result.stderr)
+        raise RuntimeError("Subprocesso falhou com código de saída diferente de zero.")
 
 def execute_handlers(base_path, folder_files):
     errors = {}
