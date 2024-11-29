@@ -35,8 +35,12 @@ import importlib.util
 spec = importlib.util.spec_from_file_location('{module_name}', '{file_path}')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
+print("iniciando...")
 if hasattr(module, 'handler'):
+    print("iniciado")
     module.handler()
+else:
+    print("nao iniciado")
 """
     result = subprocess.run(["python3", "-c", script], capture_output=True, text=True)
     if result.returncode != 0:
