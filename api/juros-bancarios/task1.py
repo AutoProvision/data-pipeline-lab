@@ -1,3 +1,5 @@
+print("1")
+
 import boto3
 import os
 import requests
@@ -6,11 +8,14 @@ import io
 import asyncio
 import aiohttp
 import json
+print("2")
 
 s3_client = boto3.client('s3')
 
+print("3")
 DEST_BUCKET_NAME = os.getenv("BUCKET_STAGING_NAME")
 DEST_PATH = 'banco-central/juros-bancarios'
+print("4")
 
 base_url = 'https://www.bcb.gov.br/api/servico/sitebcb'
 
