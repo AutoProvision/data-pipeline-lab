@@ -67,17 +67,23 @@ async def process_parametros(session, data, df_parametros):
     await asyncio.gather(*tasks)
 
 async def main(df_datas, df_parametros):
+    print("d")
     async with aiohttp.ClientSession() as session:
+        print("e")
         for data in df_datas['InicioPeriodo'][::-1]:
+            print("f")
             print(f'Recuperando arquivos de {data}...')
 
             await process_parametros(session, data, df_parametros)
 
 def lambda_handler(event, context):
+    print("a")
     df_parametros = get_parametros()
     df_datas = get_datas()
+    print("b")
 
     main(df_datas, df_parametros)
+    print("c")
 
 def handler():
     return lambda_handler({}, {})
