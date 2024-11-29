@@ -13,3 +13,4 @@ psutil
 faker
 openpyxl
 scikit-learn
+aiohttp
