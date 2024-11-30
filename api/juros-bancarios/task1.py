@@ -83,16 +83,16 @@ def lambda_handler(event, context):
     direct_subdirectories = set()
 
     for page in paginator.paginate(**operation_parameters):
-        # Verificar por subdiretórios
         if "CommonPrefixes" in page:
             for common_prefix in page["CommonPrefixes"]:
                 dir_path = common_prefix["Prefix"]
-                # Remove o prefixo base e guarda apenas os filhos diretos
                 direct_subdir = dir_path[len(prefix):].rstrip("/")
-                if "/" not in direct_subdir:  # Certifica-se de que é um filho direto
+                if "/" not in direct_subdir:
                     direct_subdirectories.add(direct_subdir)
+    
+    df_datas = df_datas[~df_datas['InicioPeriodo'].isin(direct_subdirectories)]
 
-    print("Filhos diretos:", direct_subdirectories)
+    print("Filhos diretos:", df_datas['InicioPeriodo'].tolist())
 
     # asyncio.run(main(df_datas, df_parametros, all_objects))
 
