@@ -31,8 +31,6 @@ async def get_hist_taxas(session, classificacao, modalidade, data):
     try:
         url = f"{base_url}/historicotaxajurosdiario/TodosCampos?filtro=(codigoSegmento eq '{classificacao}') and (codigoModalidade eq '{modalidade}') and (InicioPeriodo eq '{data}')"
         async with session.get(url) as response:
-            text = await response.text()
-            print(text)
             return await response.json()
     except Exception as e:
         print(f"Erro ao recuperar dados: {e}")
@@ -97,6 +95,7 @@ def lambda_handler(event, context):
     data_corte = datetime.now() - timedelta(days=365*2)
     df_datas['InicioPeriodo'] = pd.to_datetime(df_datas['InicioPeriodo'])
     df_datas = df_datas[df_datas['InicioPeriodo'] >= data_corte]
+    df_datas['InicioPeriodo'] = df_datas['InicioPeriodo'].dt.strftime('%Y-%m-%d')
 
     asyncio.run(main(df_datas, df_parametros))
 
