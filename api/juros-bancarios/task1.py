@@ -77,14 +77,17 @@ def lambda_handler(event, context):
     operation_parameters = {
         "Bucket": DEST_BUCKET_NAME,
         "Prefix": prefix,
+        "Delimiter": "/",
     }
 
     all_objects = []
     for page in paginator.paginate(**operation_parameters):
         if "Contents" in page:
             all_objects.extend(page["Contents"])
+    for obj in all_objects:
+        print(f"Arquivo encontrado: {obj['Key']}")
 
-    asyncio.run(main(df_datas, df_parametros, all_objects))
+    # asyncio.run(main(df_datas, df_parametros, all_objects))
 
 def handler():
     return lambda_handler({}, {})
