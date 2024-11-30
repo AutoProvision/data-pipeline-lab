@@ -6,6 +6,7 @@ import io
 import asyncio
 import aiohttp
 import json
+from datetime import datetime, timedelta
 
 s3_client = boto3.client('s3')
 
@@ -87,6 +88,9 @@ def lambda_handler(event, context):
                     direct_subdirectories.add(direct_subdir)
 
     df_datas = df_datas[~df_datas['InicioPeriodo'].isin(direct_subdirectories)]
+    data_corte = datetime.now() - timedelta(days=365*2)
+    df_datas['InicioPeriodo'] = pd.to_datetime(df_datas['InicioPeriodo'])
+    df_datas = df_datas[df_datas['InicioPeriodo'] >= data_corte]
 
     asyncio.run(main(df_datas, df_parametros))
 
