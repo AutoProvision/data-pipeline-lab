@@ -80,12 +80,19 @@ def lambda_handler(event, context):
         "Delimiter": "/",
     }
 
-    all_objects = []
+    direct_subdirectories = set()
+
     for page in paginator.paginate(**operation_parameters):
-        if "Contents" in page:
-            all_objects.extend(page["Contents"])
-    for obj in all_objects:
-        print(f"Arquivo encontrado: {obj['Key']}")
+        # Verificar por subdiretórios
+        if "CommonPrefixes" in page:
+            for common_prefix in page["CommonPrefixes"]:
+                dir_path = common_prefix["Prefix"]
+                # Remove o prefixo base e guarda apenas os filhos diretos
+                direct_subdir = dir_path[len(prefix):].rstrip("/")
+                if "/" not in direct_subdir:  # Certifica-se de que é um filho direto
+                    direct_subdirectories.add(direct_subdir)
+
+    print("Filhos diretos:", direct_subdirectories)
 
     # asyncio.run(main(df_datas, df_parametros, all_objects))
 
