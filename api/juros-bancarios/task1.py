@@ -44,15 +44,11 @@ async def fetch_and_save_hist_taxas(session, codigoSegmento, codigoModalidade, d
         f.seek(0)
         s3_client.upload_fileobj(f, DEST_BUCKET_NAME, s3_key)
 
-async def process_parametros(session, data, df_parametros, all_objects):
+async def process_parametros(session, data, df_parametros):
     tasks = []
     for _, parametro in df_parametros.iterrows():
         codigoSegmento = parametro['codigoSegmento']
         codigoModalidade = parametro['codigoModalidade']
-
-        s3_key = f'{DEST_PATH}/{data}/{codigoSegmento}-{codigoModalidade}/txjuros.json'
-        if any(obj['Key'] == s3_key for obj in all_objects):
-            continue
 
         task = asyncio.create_task(fetch_and_save_hist_taxas(
             session, codigoSegmento, codigoModalidade, data
@@ -61,12 +57,12 @@ async def process_parametros(session, data, df_parametros, all_objects):
 
     await asyncio.gather(*tasks)
 
-async def main(df_datas, df_parametros, all_objects):
+async def main(df_datas, df_parametros):
     async with aiohttp.ClientSession() as session:
         for data in df_datas['InicioPeriodo'][::-1]:
             print(f'Recuperando arquivos de {data}...')
 
-            await process_parametros(session, data, df_parametros, all_objects)
+            await process_parametros(session, data, df_parametros)
 
 def lambda_handler(event, context):
     df_parametros = get_parametros()
@@ -89,12 +85,10 @@ def lambda_handler(event, context):
                 direct_subdir = dir_path[len(prefix):].rstrip("/")
                 if "/" not in direct_subdir:
                     direct_subdirectories.add(direct_subdir)
-    
+
     df_datas = df_datas[~df_datas['InicioPeriodo'].isin(direct_subdirectories)]
 
-    print("Filhos diretos:", df_datas['InicioPeriodo'].tolist())
-
-    # asyncio.run(main(df_datas, df_parametros, all_objects))
+    asyncio.run(main(df_datas, df_parametros))
 
 def handler():
     return lambda_handler({}, {})
