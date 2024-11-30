@@ -28,9 +28,13 @@ def get_datas():
     return pd.DataFrame(datas['conteudo'])
 
 async def get_hist_taxas(session, classificacao, modalidade, data):
-	url = f"{base_url}/historicotaxajurosdiario/TodosCampos?filtro=(codigoSegmento eq '{classificacao}') and (codigoModalidade eq '{modalidade}') and (InicioPeriodo eq '{data}')"
-	async with session.get(url) as response:
-		return await response.json()
+    try:
+        url = f"{base_url}/historicotaxajurosdiario/TodosCampos?filtro=(codigoSegmento eq '{classificacao}') and (codigoModalidade eq '{modalidade}') and (InicioPeriodo eq '{data}')"
+        async with session.get(url) as response:
+            return await response.json()
+    except Exception as e:
+        print(f"Erro ao recuperar dados: {e}")
+        return {}
 
 async def fetch_and_save_hist_taxas(session, codigoSegmento, codigoModalidade, data):
     hist_taxas = await get_hist_taxas(session, codigoSegmento, codigoModalidade, data)
