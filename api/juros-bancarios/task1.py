@@ -80,4 +80,18 @@ def lambda_handler(event, context):
     asyncio.run(main(df_datas, df_parametros))
 
 def handler():
-    return lambda_handler({}, {})
+    prefix = f"{DEST_PATH}/"
+    paginator = s3_client.get_paginator("list_objects_v2")
+    operation_parameters = {
+        "Bucket": DEST_BUCKET_NAME,
+        "Prefix": prefix,
+    }
+
+    all_objects = []
+    for page in paginator.paginate(**operation_parameters):
+        if "Contents" in page:
+            all_objects.extend(page["Contents"])
+
+    print(f"Total de objetos encontrados: {len(all_objects)}")
+    for obj in all_objects:
+        print(f"Chave: {obj['Key']} - Tamanho: {obj['Size']}")
