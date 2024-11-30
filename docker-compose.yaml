@@ -11,4 +11,4 @@ services:
     entrypoint: ["sh", "-c", "python main.py"]
     restart: "no"
     network_mode: host
-    mem_limit: 7g
+    mem_limit: 15g

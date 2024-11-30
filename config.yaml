@@ -7,6 +7,8 @@ bucket:
     name: "autop-trusted"
   refined:
     name: "autop-refined"
+  client:
+    name: "autop-client"
 db:
   zoho:
     instance:
