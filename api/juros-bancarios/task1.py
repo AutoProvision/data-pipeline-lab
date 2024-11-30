@@ -34,7 +34,7 @@ async def get_hist_taxas(session, classificacao, modalidade, data):
             return await response.json()
     except Exception as e:
         print(f"Erro ao recuperar dados: {e}")
-        return {}
+        return { 'conteudo': [] }
 
 async def fetch_and_save_hist_taxas(session, codigoSegmento, codigoModalidade, data):
     hist_taxas = await get_hist_taxas(session, codigoSegmento, codigoModalidade, data)
