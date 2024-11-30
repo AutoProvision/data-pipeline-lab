@@ -31,6 +31,7 @@ async def get_hist_taxas(session, classificacao, modalidade, data):
     try:
         url = f"{base_url}/historicotaxajurosdiario/TodosCampos?filtro=(codigoSegmento eq '{classificacao}') and (codigoModalidade eq '{modalidade}') and (InicioPeriodo eq '{data}')"
         async with session.get(url) as response:
+            print(response.text())
             return await response.json()
     except Exception as e:
         print(f"Erro ao recuperar dados: {e}")
