@@ -44,20 +44,15 @@ async def fetch_and_save_hist_taxas(session, codigoSegmento, codigoModalidade, d
         f.seek(0)
         s3_client.upload_fileobj(f, DEST_BUCKET_NAME, s3_key)
 
-async def process_parametros(session, data, df_parametros):
+async def process_parametros(session, data, df_parametros, all_objects):
     tasks = []
     for _, parametro in df_parametros.iterrows():
         codigoSegmento = parametro['codigoSegmento']
         codigoModalidade = parametro['codigoModalidade']
 
         s3_key = f'{DEST_PATH}/{data}/{codigoSegmento}-{codigoModalidade}/txjuros.json'
-
-        try:
-            s3_client.head_object(Bucket=DEST_BUCKET_NAME, Key=s3_key)
+        if any(obj['Key'] == s3_key for obj in all_objects):
             continue
-        except s3_client.exceptions.ClientError as e:
-            if e.response['Error']['Code'] != '404':
-                raise
 
         task = asyncio.create_task(fetch_and_save_hist_taxas(
             session, codigoSegmento, codigoModalidade, data
@@ -66,20 +61,17 @@ async def process_parametros(session, data, df_parametros):
 
     await asyncio.gather(*tasks)
 
-async def main(df_datas, df_parametros):
+async def main(df_datas, df_parametros, all_objects):
     async with aiohttp.ClientSession() as session:
         for data in df_datas['InicioPeriodo'][::-1]:
             print(f'Recuperando arquivos de {data}...')
 
-            await process_parametros(session, data, df_parametros)
+            await process_parametros(session, data, df_parametros, all_objects)
 
 def lambda_handler(event, context):
     df_parametros = get_parametros()
     df_datas = get_datas()
 
-    asyncio.run(main(df_datas, df_parametros))
-
-def handler():
     prefix = f"{DEST_PATH}/"
     paginator = s3_client.get_paginator("list_objects_v2")
     operation_parameters = {
@@ -92,6 +84,7 @@ def handler():
         if "Contents" in page:
             all_objects.extend(page["Contents"])
 
-    print(f"Total de objetos encontrados: {len(all_objects)}")
-    for obj in all_objects:
-        print(f"Chave: {obj['Key']} - Tamanho: {obj['Size']}")
+    asyncio.run(main(df_datas, df_parametros, all_objects))
+
+def handler():
+    return lambda_handler({}, {})
