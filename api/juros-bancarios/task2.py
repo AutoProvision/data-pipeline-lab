@@ -46,7 +46,8 @@ def lambda_handler(event, context):
     df.drop(['Posicao', 'TaxaJurosAoMes'], axis=1, inplace=True)
 
     parquet_file = BytesIO()
-    df.upload_fileobj(parquet_file, index=False, engine='pyarrow')
+    df.to_parquet(parquet_file, index=False, engine='pyarrow')
+    parquet_file.seek(0)
 
     TODAY = pd.Timestamp.today().strftime('%Y-%m-%d')
     s3_client.upload_file(parquet_file, DEST_BUCKET_NAME, f"{DEST_PATH}/{TODAY}/df.parquet")
