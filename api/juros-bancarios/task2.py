@@ -25,21 +25,18 @@ def list_s3_files():
 
     return all_files
 
-def read_s3_file(key):
-    response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=key)
-    try:
-        return response['Body'].read().decode('utf-8')
-    except UnicodeDecodeError:
-        return "{ 'conteudo': [] }"
-
 def lambda_handler(event, context):
     all_files = list_s3_files()
     all_files.sort()
 
     arrow_tables = []
     for file in all_files:
-        print(f"Lendo arquivo {file}")
-        content = read_s3_file(file)
+        response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=file)
+        try:
+            return response['Body'].read().decode('utf-8')
+        except UnicodeDecodeError:
+            print(f"Erro ao ler arquivo {file}")
+            continue
         date = file.split('/')[-3]
         data = eval(content)
         df = pd.DataFrame(data['conteudo'])
@@ -59,7 +56,6 @@ def lambda_handler(event, context):
 
     TODAY = pd.Timestamp.today().strftime('%Y-%m-%d')
     s3_client.upload_fileobj(parquet_file, DEST_BUCKET_NAME, f"{DEST_PATH}/{TODAY}/df.parquet")
-    print(f"Arquivo combinado enviado para {DEST_BUCKET_NAME}/{DEST_PATH}/{TODAY}/df.parquet")
 
 def handler():
     return lambda_handler(None, None)
