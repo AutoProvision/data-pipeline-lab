@@ -50,7 +50,7 @@ def lambda_handler(event, context):
     parquet_file.seek(0)
 
     TODAY = pd.Timestamp.today().strftime('%Y-%m-%d')
-    s3_client.upload_file(parquet_file, DEST_BUCKET_NAME, f"{DEST_PATH}/{TODAY}/df.parquet")
+    s3_client.upload_fileobj(parquet_file, DEST_BUCKET_NAME, f"{DEST_PATH}/{TODAY}/df.parquet")
     print(f"Arquivo combinado enviado para {DEST_BUCKET_NAME}/{DEST_PATH}/{TODAY}/df.parquet")
 
 def handler():
