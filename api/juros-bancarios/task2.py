@@ -32,6 +32,11 @@ def lambda_handler(event, context):
     for file in all_files:
         print(f"Lendo arquivo {file}")
         content = read_s3_file(SRC_BUCKET_NAME, file)
+        print(file)
+        print(file.split('/'))
+        print(file.split('/')[-1])
+        print(file.split('/')[-2])
+        print(file.split('/')[-3])
         date = file.split('/')[-2]
         data = eval(content)
         df = pd.DataFrame(data['conteudo'])
