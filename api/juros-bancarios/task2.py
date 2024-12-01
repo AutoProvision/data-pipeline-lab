@@ -12,10 +12,18 @@ DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 DEST_PATH = 'banco-central/juros-bancarios'
 
 def list_s3_files(prefix):
-    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
-    if 'Contents' not in response:
-        return []
-    return [obj['Key'] for obj in response['Contents'] if not obj['Key'].endswith('/')]
+    paginator = s3_client.get_paginator('list_objects_v2')
+    operation_parameters = {
+        'Bucket': SRC_BUCKET_NAME,
+        'Prefix': SRC_PATH,
+    }
+
+    all_files = []
+    for page in paginator.paginate(**operation_parameters):
+        if 'Contents' in page:
+            all_files.extend(obj['Key'] for obj in page['Contents'] if not obj['Key'].endswith('/'))
+
+    return all_files
 
 def read_s3_file(key):
     response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=key)
@@ -52,12 +60,4 @@ def lambda_handler(event, context):
     print(f"Arquivo combinado enviado para {DEST_BUCKET_NAME}/{DEST_PATH}/{TODAY}/df.parquet")
 
 def handler():
-    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
-    if 'Contents' not in response:
-        return []
-
-    all_files = [obj['Key'] for obj in response['Contents'] if not obj['Key'].endswith('/')]
-
-    print(all_files)
-
-    # return lambda_handler(None, None)
+    return lambda_handler(None, None)
