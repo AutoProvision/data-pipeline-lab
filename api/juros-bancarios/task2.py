@@ -27,11 +27,13 @@ def list_s3_files():
 
 def read_s3_file(key):
     response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=key)
-    return response['Body'].read().decode('utf-8')
+    try:
+        return response['Body'].read().decode('utf-8')
+    except UnicodeDecodeError:
+        return "{ 'conteudo': [] }"
 
 def lambda_handler(event, context):
     all_files = list_s3_files()
-    print(all_files)
     all_files.sort()
 
     arrow_tables = []
