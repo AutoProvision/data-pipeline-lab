@@ -6,9 +6,9 @@ from io import BytesIO
 
 s3_client = boto3.client('s3')
 
-SRC_BUCKET_NAME = os.getenv("SRC_STAGING_NAME")
+SRC_BUCKET_NAME = os.getenv("BUCKET_STAGING_NAME")
 SRC_PATH = 'banco-central/juros-bancarios'
-DEST_BUCKET_NAME = os.getenv("BUCKET_NAME")
+DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 DEST_PATH = 'banco-central/juros-bancarios'
 
 def list_s3_files(bucket_name, prefix):
