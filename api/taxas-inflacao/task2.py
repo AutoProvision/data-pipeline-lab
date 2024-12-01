@@ -34,7 +34,7 @@ def lambda_handler(event, context):
         axis=1,
         inplace=True
     )
-    
+
     buffer = BytesIO()
     df.to_parquet(buffer, index=False, engine='pyarrow')
 
