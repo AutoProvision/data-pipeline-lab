@@ -14,7 +14,7 @@ DEST_PATH = "banco-central/juros-bancarios/df.csv"
 
 def lambda_handler(event, context):
     obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
-    df = pd.read_csv(io.BytesIO(obj['Body'].read()), sep=',')
+    df = pd.read_parquet(io.BytesIO(obj['Body'].read()), engine='pyarrow')
 
     df['mes_ano'] = df['dt_referencia'].dt.strftime('%b/%Y').str.lower()
     df_grouped = df.groupby(['ct_modalidade', 'mes_ano'], as_index=False)['vl_taxa_juros_mes'].mean()
