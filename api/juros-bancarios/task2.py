@@ -6,10 +6,11 @@ from io import BytesIO
 
 s3_client = boto3.client('s3')
 
+TODAY = pd.Timestamp.today().strftime('%Y-%m-%d')
 SRC_BUCKET_NAME = os.getenv("BUCKET_STAGING_NAME")
 SRC_PATH = 'banco-central/juros-bancarios'
 DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
-DEST_PATH = 'banco-central/juros-bancarios'
+DEST_PATH = f'banco-central/juros-bancarios/{TODAY}/df.parquet'
 
 def list_s3_files():
     paginator = s3_client.get_paginator('list_objects_v2')
@@ -26,6 +27,13 @@ def list_s3_files():
     return all_files
 
 def lambda_handler(event, context):
+    try:
+        s3_client.head_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH)
+        print(f"Arquivo {DEST_PATH} já existe no bucket {DEST_BUCKET_NAME}. Encerrando a execução")
+        return
+    except:
+        pass
+
     all_files = list_s3_files()
     all_files.sort()
 
@@ -54,8 +62,7 @@ def lambda_handler(event, context):
     df.to_parquet(parquet_file, index=False, engine='pyarrow')
     parquet_file.seek(0)
 
-    TODAY = pd.Timestamp.today().strftime('%Y-%m-%d')
-    s3_client.upload_fileobj(parquet_file, DEST_BUCKET_NAME, f"{DEST_PATH}/{TODAY}/df.parquet")
+    s3_client.upload_fileobj(parquet_file, DEST_BUCKET_NAME, DEST_PATH)
 
 def handler():
     return lambda_handler(None, None)
