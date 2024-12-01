@@ -32,11 +32,13 @@ def lambda_handler(event, context):
     arrow_tables = []
     for file in all_files:
         response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=file)
+        response = response['Body'].read()
+        print(file)
         try:
-            content = response['Body'].read().decode('utf-8')
-        except UnicodeDecodeError:
-            print(f"Erro ao ler arquivo {file}")
-            continue
+            content = response.decode('utf-8')
+        except:
+            content = response.decode('latin-1')
+            print(content)
         date = file.split('/')[-3]
         data = eval(content)
         df = pd.DataFrame(data['conteudo'])
