@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     df = pd.read_parquet(io.BytesIO(obj['Body'].read()), engine='pyarrow')
 
     df['mes_ano'] = df['dt_referencia'].dt.strftime('%b/%Y').str.lower()
-    df_grouped = df.groupby(['ct_modalidade', 'mes_ano'], as_index=False)['vl_taxa_juros_mes'].mean()
+    df_grouped = df.groupby(['ct_modalidade', 'mes_ano'], as_index=False, observed=True)['vl_taxa_juros_mes'].mean()
     df_pivot = df_grouped.pivot(index='ct_modalidade', columns='mes_ano', values='vl_taxa_juros_mes')
     df_pivot = df_pivot.sort_index(axis=1, key=lambda x: pd.to_datetime(x, format='%b/%Y'))
 
