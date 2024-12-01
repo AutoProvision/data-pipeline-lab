@@ -11,7 +11,7 @@ SRC_PATH = 'banco-central/juros-bancarios'
 DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 DEST_PATH = 'banco-central/juros-bancarios'
 
-def list_s3_files(prefix):
+def list_s3_files():
     paginator = s3_client.get_paginator('list_objects_v2')
     operation_parameters = {
         'Bucket': SRC_BUCKET_NAME,
