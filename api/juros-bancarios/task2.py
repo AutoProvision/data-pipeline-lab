@@ -33,7 +33,7 @@ def lambda_handler(event, context):
     for file in all_files:
         response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=file)
         try:
-            return response['Body'].read().decode('utf-8')
+            content = response['Body'].read().decode('utf-8')
         except UnicodeDecodeError:
             print(f"Erro ao ler arquivo {file}")
             continue
