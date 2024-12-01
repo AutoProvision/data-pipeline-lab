@@ -11,27 +11,25 @@ SRC_PATH = 'banco-central/juros-bancarios'
 DEST_BUCKET_NAME = os.getenv("BUCKET_RAW_NAME")
 DEST_PATH = 'banco-central/juros-bancarios'
 
-def list_s3_files(bucket_name, prefix):
-    response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
-    print(response)
+def list_s3_files(prefix):
+    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
     if 'Contents' not in response:
         return []
     return [obj['Key'] for obj in response['Contents'] if not obj['Key'].endswith('/')]
 
-def read_s3_file(bucket_name, key):
-    response = s3_client.get_object(Bucket=bucket_name, Key=key)
-    print(response)
+def read_s3_file(key):
+    response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=key)
     return response['Body'].read().decode('utf-8')
 
 def lambda_handler(event, context):
-    all_files = list_s3_files(SRC_BUCKET_NAME, SRC_PATH)
+    all_files = list_s3_files()
     print(all_files)
     all_files.sort()
 
     arrow_tables = []
     for file in all_files:
         print(f"Lendo arquivo {file}")
-        content = read_s3_file(SRC_BUCKET_NAME, file)
+        content = read_s3_file(file)
         date = file.split('/')[-3]
         data = eval(content)
         df = pd.DataFrame(data['conteudo'])
@@ -54,4 +52,12 @@ def lambda_handler(event, context):
     print(f"Arquivo combinado enviado para {DEST_BUCKET_NAME}/{DEST_PATH}/{TODAY}/df.parquet")
 
 def handler():
-    return lambda_handler(None, None)
+    response = s3_client.list_objects_v2(Bucket=SRC_BUCKET_NAME, Prefix=SRC_PATH)
+    if 'Contents' not in response:
+        return []
+
+    all_files = [obj['Key'] for obj in response['Contents'] if not obj['Key'].endswith('/')]
+
+    print(all_files)
+
+    # return lambda_handler(None, None)
