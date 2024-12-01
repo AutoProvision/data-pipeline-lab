@@ -33,12 +33,10 @@ def lambda_handler(event, context):
     for file in all_files:
         response = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=file)
         response = response['Body'].read()
-        print(file)
         try:
             content = response.decode('utf-8')
         except:
             content = response.decode('latin-1')
-            print(content)
         date = file.split('/')[-3]
         data = eval(content)
         df = pd.DataFrame(data['conteudo'])
