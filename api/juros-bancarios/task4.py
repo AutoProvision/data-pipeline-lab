@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     df_pivot = df_pivot.sort_index(axis=1, key=lambda x: pd.to_datetime(x, format='%b/%Y'))
 
     csv_buffer = io.StringIO()
-    df.to_csv(csv_buffer, index=False)
+    df.to_csv(csv_buffer, index=False, sep=';')
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=csv_buffer.getvalue())
 

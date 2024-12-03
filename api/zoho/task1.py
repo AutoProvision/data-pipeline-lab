@@ -39,7 +39,7 @@ def lambda_handler(event, context):
         df = pd.read_sql_query(f"SELECT * FROM {schema}.{table};", conn)
 
         csv_buffer = StringIO()
-        df.to_csv(csv_buffer, index=False)
+        df.to_csv(csv_buffer, index=False, sep=';')
 
         s3_client.put_object(
         	Bucket=BUCKET_NAME,

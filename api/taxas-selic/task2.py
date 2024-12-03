@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     df['data'] = pd.to_datetime(df['data'], format='%d/%m/%Y')
 
     csv_buffer = io.StringIO()
-    df.to_csv(csv_buffer, index=False)
+    df.to_csv(csv_buffer, index=False, sep=';')
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=csv_buffer.getvalue())
 

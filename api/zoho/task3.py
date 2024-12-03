@@ -14,10 +14,10 @@ DEST_PATH = f'autoprovision/modelo-riscos/df.csv'
 
 def lambda_handler(event, context):
     obj = s3_client.get_object(Bucket=SRC_BUCKET_NAME, Key=SRC_PATH)
-    df = pd.read_csv(io.BytesIO(obj['Body'].read()), sep=',')
+    df = pd.read_csv(io.BytesIO(obj['Body'].read()), sep=';')
 
     csv_buffer = io.StringIO()
-    df.to_csv(csv_buffer, index=False)
+    df.to_csv(csv_buffer, index=False, sep=';')
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=csv_buffer.getvalue())
 

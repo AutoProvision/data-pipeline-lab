@@ -135,7 +135,7 @@ def lambda_handler(event, context):
     s3_client.upload_fileobj(buffer, DEST_BUCKET_NAME, f"{DEST_PATH}/df.xlsx")
 
     buffer = io.BytesIO()
-    cluster_classificado[colunas_originais].to_csv(buffer, index=False)
+    cluster_classificado[colunas_originais].to_csv(buffer, index=False, sep=';')
     buffer.seek(0)
     s3_client.upload_fileobj(buffer, DEST_BUCKET_NAME, f"{DEST_PATH}/df.csv")
 

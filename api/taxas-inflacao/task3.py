@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     df = pd.read_parquet(BytesIO(obj['Body'].read()), engine='pyarrow')
 
     csv_buffer = BytesIO()
-    df.to_csv(csv_buffer, index=False)
+    df.to_csv(csv_buffer, index=False, sep=';')
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=csv_buffer.getvalue())
 
