@@ -18,11 +18,11 @@ def lambda_handler(event, context):
 
     df['mes_ano'] = df['dt_referencia'].dt.strftime('%b/%Y').str.lower()
     df_grouped = df.groupby(['ct_modalidade', 'mes_ano'], as_index=False, observed=True)['vl_taxa_juros_mes'].mean()
-    df_pivot = df_grouped.pivot(index='ct_modalidade', columns='mes_ano', values='vl_taxa_juros_mes')
-    df_pivot = df_pivot.sort_index(axis=1, key=lambda x: pd.to_datetime(x, format='%b/%Y'))
+    df_pivot = df_grouped.pivot(index='mes_ano', columns='ct_modalidade', values='vl_taxa_juros_mes')
+    df_pivot = df_pivot.sort_index(key=lambda x: pd.to_datetime(x, format='%b/%Y'))
 
     csv_buffer = io.StringIO()
-    df.to_csv(csv_buffer, index=False, sep=';')
+    df_pivot.to_csv(csv_buffer, index=False, sep=';')
 
     s3_client.put_object(Bucket=DEST_BUCKET_NAME, Key=DEST_PATH, Body=csv_buffer.getvalue())
 
