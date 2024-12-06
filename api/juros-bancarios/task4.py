@@ -20,6 +20,7 @@ def lambda_handler(event, context):
     df_grouped = df.groupby(['ct_modalidade', 'mes_ano'], as_index=False, observed=True)['vl_taxa_juros_mes'].mean()
     df_pivot = df_grouped.pivot(index='mes_ano', columns='ct_modalidade', values='vl_taxa_juros_mes')
     df_pivot = df_pivot.sort_index(key=lambda x: pd.to_datetime(x, format='%b/%Y'))
+    df_pivot.index = pd.to_datetime(df_pivot.index, format='%b/%Y').strftime('%Y-%m-%d')
 
     csv_buffer = io.StringIO()
     df_pivot.to_csv(csv_buffer, index=True, sep=';')
